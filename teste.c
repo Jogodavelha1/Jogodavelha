@@ -1,68 +1,63 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #define TAMANHO 3
 #define JOGADORES 100
-#define NOME 15 //Temos QUE Colocar no Ranking para o Nickname ser no maximo 15 caractere
+#define NOME 16 // Aumentei o tamanho do campo de nome para 16 para considerar o caractere nulo ('\0')
 #define ARQUIVO "ranking.txt"
-
 
 typedef struct {
     char name[NOME];
     int wins;
     int losses;
-    int dificuldade; 
+    int dificuldade;
 } Player;
 
-void save_ranking(Player *players, int num_players);
-void load_ranking(Player *players, int *num_players);
-void display_ranking(Player *players, int num_players);
-void display_sobre();
-void display_menu();
+void exibirMenu();
+void jogar(Player *jogador, int *Ojogador);
+void exibirSobre();
 void clear_screen();
-void choose_dificuldade(Player *player) ;
-void play_game(Player *player, int dificuldade);
-int check_winner(char board[TAMANHO][TAMANHO]);
-
-
-
-
+void save_ranking(Player *jogador, int Ojogador);
+void load_ranking(Player *jogador, int *Ojogador);
+void display_ranking(Player *jogador, int Ojogador);
+void Adificuldade(Player *player);
+int check_victory(char tabuleiro[TAMANHO][TAMANHO], char jogador_atual);
 
 int main() {
-    Player players[JOGADORES];
-    int num_players = 0;
+    Player jogador[JOGADORES];
+    int Ojogador = 0;
     int menu1;
 
-    load_ranking(players, &num_players);
+    load_ranking(jogador, &Ojogador);
 
     clear_screen();
     printf("Bem-vindo ao Jogo da Velha!\n");
 
     do {
-        display_menu();
+        exibirMenu();
         scanf("%d", &menu1);
 
         switch (menu1) {
             case 1:
                 clear_screen();
+                printf("Bem-vindo ao jogo da velha!\n");
                 printf("Digite seu NickName: ");
-                scanf("%s", players[num_players].name);
-                players[num_players].wins = 0;
-                players[num_players].losses = 0;
-                choose_dificuldade(&players[num_players]);
-                play_game(&players[num_players], players[num_players].dificuldade);
-                num_players++;
+                scanf("%s", jogador[Ojogador].name);
+                jogador[Ojogador].wins = 0;
+                jogador[Ojogador].losses = 0;
+                Adificuldade(&jogador[Ojogador]);
+                jogar(&jogador[Ojogador], &Ojogador);
+                Ojogador++;
                 break;
             case 2:
-                display_ranking(players, num_players);
+                display_ranking(jogador, Ojogador);
                 break;
             case 3:
-                display_sobre();
+                exibirSobre();
                 break;
             case 4:
-                save_ranking(players, num_players);
+                save_ranking(jogador, Ojogador);
                 break;
             default:
                 printf("Opcao invalida. Tente novamente.\n");
@@ -70,15 +65,14 @@ int main() {
         }
     } while (menu1 != 4);
 
+    clear_screen();
+    printf("Obrigado por jogar!\n");
+
     return 0;
 }
 
-void clear_screen() {
-    system("cls");
-}
-
-void display_menu() {
-    printf("===== MENU =====\n");
+void exibirMenu() {
+    printf("\n===== MENU =====\n");
     printf("1. Jogar\n");
     printf("2. Ranking\n");
     printf("3. Sobre\n");
@@ -87,259 +81,187 @@ void display_menu() {
     printf("Escolha uma opcao: ");
 }
 
-int check_winner(char board[TAMANHO][TAMANHO]) {
-    // Verificar linhas
-    for (int linha = 0; linha < TAMANHO; linha++) {
-        if (board[linha][0] != ' ' && board[linha][0] == board[linha][1] && board[linha][0] == board[linha][2]) {
-            if (board[linha][0] == 'X')
-                return 1; // Jogador venceu
-            else
-                return 2; // Máquina venceu
+void jogar(Player *jogador, int *Ojogador) {
+    char tabuleiro[TAMANHO][TAMANHO];
+    int i, j;
+    int jogadas = 0;
+    int vitoria = 0;
+    char jogador_atual = 'X';
+
+
+    // Inicializar tabuleiro
+    for (i = 0; i < TAMANHO; i++) {
+        for (j = 0; j < TAMANHO; j++) {
+            tabuleiro[i][j] = ' ';
         }
     }
 
-    // Verificar colunas
-    for (int colunas = 0; colunas < TAMANHO; colunas++) {
-        if (board[0][colunas] != ' ' && board[0][colunas] == board[1][colunas] && board[0][colunas] == board[2][colunas]) {
-            if (board[0][colunas] == 'X')
-                return 1; // Jogador venceu
-            else
-                return 2; // Máquina venceu
+    // Loop do jogo
+    while (jogadas < TAMANHO * TAMANHO && !vitoria) {
+        clear_screen();
+        printf("Jogador: %s\n", jogador->name);
+        printf("Dificuldade: %d\n\n", jogador->dificuldade);
+        printf("===== JOGO DA VELHA =====\n\n");
+
+        // Exibir tabuleiro
+        printf("  1   2   3\n");
+        for (i = 0; i < TAMANHO; i++) {
+            printf("%d ", i + 1);
+            for (j = 0; j < TAMANHO; j++) {
+                printf(" %c ", tabuleiro[i][j]);
+                if (j < TAMANHO - 1) {
+                    printf("|");
+                }
+            }
+            printf("\n");
+            if (i < TAMANHO - 1) {
+                printf("  ---+---+---\n");
+            }
+        }
+
+        printf("\n");
+
+        if (jogador_atual == 'X') {
+            int linha, coluna;
+
+            printf("Sua vez de jogar!\n");
+            printf("Digite a linha (1-%d): ", TAMANHO);
+            scanf("%d", &linha);
+            linha--; 
+
+            printf("Digite a coluna (1-%d): ", TAMANHO);
+            scanf("%d", &coluna);
+            coluna--; 
+            
+            
+            if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
+                printf("Posicao invalida. Tente novamente.\n");
+                continue;
+            }
+
+            // Realizar jogada do jogador
+            tabuleiro[linha][coluna] = jogador_atual;
+        } else {
+            printf("Vez da maquina jogar...\n");
+
+            // Lógica da jogada da máquina de acordo com a dificuldade
+            if (jogador->dificuldade == 1) {
+                // Jogada aleatória fácil
+                int i, j;
+                do {
+                    i = rand() % TAMANHO;
+                    j = rand() % TAMANHO;
+                } while (tabuleiro[i][j] != ' ');
+
+                // Realizar jogada da máquina
+                tabuleiro[i][j] = jogador_atual;
+                } else if (jogador->dificuldade == 2) {
+                     // Jogada com lógica de dificuldade 2
+                int block = 0;
+                for (i = 0; i < TAMANHO; i++) {
+                    for (j = 0; j < TAMANHO; j++) {
+                        if (tabuleiro[i][j] == ' ') {
+                            tabuleiro[i][j] = 'X';
+                        if (check_victory(tabuleiro, 'X')) {
+                    // Fazer jogada de bloqueio
+                    tabuleiro[i][j] = 'O';
+                    block = 1;
+                    break;
+                }
+                tabuleiro[i][j] = ' ';
+            }
+        }
+        if (block) {
+            break;
         }
     }
+    if (!block) {
+    
+    if (tabuleiro[1][1] == ' ') {
+        tabuleiro[1][1] = 'O';
+    } else {
+        
+        int diagonal[4][2] = {{0, 0}, {0, TAMANHO-1}, {TAMANHO-1, 0}, {TAMANHO-1, TAMANHO-1}};
+        for (int k = 0; k < 4; k++) {
+            int x = diagonal[k][0];
+            int y = diagonal[k][1];
+            if (tabuleiro[x][y] == ' ') {
+                tabuleiro[x][y] = 'O'; 
+                break;
+            }
+        }
+    }
+}
 
-    // Verificar diagonais
-    if ((board[0][0] != ' ' && board[0][0] == board[1][1] && board[0][0] == board[2][2]) ||
-        (board[0][2] != ' ' && board[0][2] == board[1][1] && board[0][2] == board[2][0])) {
-        if (board[1][1] == 'X')
-            return 1; // Jogador venceu
-        else
-            return 2; // Máquina venceu
+
+            } else {
+
+                // (ainda precisa ser implementada a dificuldade 3)
+                int linha, coluna;
+                do {
+                    linha = rand() % TAMANHO;
+                    coluna = rand() % TAMANHO;
+                } while (tabuleiro[linha][coluna] != ' ');
+
+                // Realizar jogada da máquina
+                tabuleiro[linha][coluna] = jogador_atual;
+            }
+        }
+
+        // Verificar vitória
+        if (check_victory(tabuleiro, jogador_atual)) {
+            vitoria = 1;
+            if (jogador_atual == 'X') {
+                printf("Parabens, voce venceu!\n");
+                jogador->wins++;
+            } else {
+                printf("A maquina venceu!\n");
+                jogador->losses++;
+            }
+        }
+
+        // Alternar jogador
+        jogador_atual = (jogador_atual == 'X') ? 'O' : 'X';
+        jogadas++;
     }
 
     // Verificar empate
-    int empty_spots = 0;
-    for (int linha = 0; linha < TAMANHO; linha++) {
-        for (int colunas = 0; colunas < TAMANHO; colunas++) {
-            if (board[linha][colunas] == ' ')
-                empty_spots++;
-        }
-    }
+    if (!vitoria) {
+        clear_screen();
+        printf("===== JOGO DA VELHA =====\n\n");
 
-    if (empty_spots == 0)
-        return 3; // Empate
-
-    return 0; // Jogo em andamento
-}
-
-
-void play_game(Player *player, int dificuldade) {
-    char board[TAMANHO][TAMANHO];
-    int linha, colunas;
-    int turn = 0;
-    int empty_spots = TAMANHO * TAMANHO;
-    int continue_playing = 1;
-
-    // Inicializar o tabuleiro
-    for (linha = 0; linha < TAMANHO; linha++) {
-        for (colunas = 0; colunas < TAMANHO; colunas++) {
-            board[linha][colunas] = ' ';
-        }
-    }
-
-    while (continue_playing) {
-        while (1) {
-            clear_screen();
-            printf("===== JOGO DA VELHA =====\n\n");
-            printf("Jogador: %s\n\n", player->name);
-
-            // Exibir o tabuleiro
-            printf("  1   2   3\n");
-            for (linha = 0; linha < TAMANHO; linha++) {
-                printf("%d ", linha + 1);
-                for (colunas = 0; colunas < TAMANHO; colunas++) {
-                    printf(" %c ", board[linha][colunas]);
-                    if (colunas < TAMANHO - 1) {
-                        printf("|");
-                    }
-                }
-                printf("\n");
-                if (linha < TAMANHO - 1) {
-                    printf(" ---+---+---\n");
+        // Exibir tabuleiro
+        printf("  1   2   3\n");
+        for (i = 0; i < TAMANHO; i++) {
+            printf("%d ", i + 1);
+            for (j = 0; j < TAMANHO; j++) {
+                printf(" %c ", tabuleiro[i][j]);
+                if (j < TAMANHO - 1) {
+                    printf("|");
                 }
             }
-
-            int winner = check_winner(board);
-            if (winner != 0) {
-                if (winner == 1) {
-                    printf("\nParabens! Voce venceu!\n");
-                    player->wins++;
-                } else if (winner == 2) {
-                    printf("\nVoce perdeu! A maquina venceu!\n");
-                    player->losses++;
-                } else {
-                    printf("\nEmpate!\n");
-                }
-
-                printf("\nDeseja jogar novamente?\n");
-                printf("1. Sim\n");
-                printf("2. Nao\n");
-                printf("Escolha uma opcao: ");
-
-                int menu1;
-                scanf("%d", &menu1);
-
-                if (menu1 == 1) {
-                    // Limpar o tabuleiro para uma nova partida
-                    for (linha = 0; linha < TAMANHO; linha++) {
-                        for (colunas = 0; colunas < TAMANHO; colunas++) {
-                            board[linha][colunas] = ' ';
-                        }
-                    }
-                    turn = 0;
-                    empty_spots = TAMANHO * TAMANHO;
-                    continue_playing = 1;
-                } else {
-                    continue_playing = 0;
-                }
-
-                break;
+            printf("\n");
+            if (i < TAMANHO - 1) {
+                printf("  ---+---+---\n");
             }
-
-            if (turn % 2 == 0) {
-                // Solicitar jogada do jogador
-                int valid_move = 0;
-                while (!valid_move) {
-                    printf("\nDigite a linha (1-%d): ", TAMANHO);
-                    scanf("%d", &linha);
-                    printf("Digite a coluna (1-%d): ", TAMANHO);
-                    scanf("%d", &colunas);
-                    linha--;
-                    colunas--;
-
-                    if (linha >= 0 && linha < TAMANHO && colunas >= 0 && colunas < TAMANHO && board[linha][colunas] == ' ') {
-                        valid_move = 1;
-                    } else {
-                        printf("\nJogada invalida. Tente novamente.\n");
-                    }
-                }
-
-                board[linha][colunas] = 'X';
-            } else {
-                // Jogada da máquina
-                int valid_move = 0;
-                srand(time(NULL)); // aleatória
-
-                if (dificuldade == 1) {
-                    while (!valid_move) {
-                        linha = rand() % TAMANHO;
-                        colunas = rand() % TAMANHO;
-
-                        if (board[linha][colunas] == ' ') {
-                            valid_move = 1;
-                        }
-                    }
-                } else if (dificuldade == 2) {
-                    valid_move = 0;
-                    // Tentar jogar na linha 2, coluna 2
-                    if (board[1][1] == ' ') {
-                        linha = 1;
-                        colunas = 1;
-                        valid_move = 1;
-                    } else {
-                        // Procurar por quinas disponíveis
-                        int corners[4][2] = {{0, 0}, {0, 2}, {2, 0}, {2, 2}};
-                        for (int i = 0; i < 4; i++) {
-                            int corner_linha = corners[i][0];
-                            int corner_colunas = corners[i][1];
-                            if (board[corner_linha][corner_colunas] == ' ') {
-                                linha = corner_linha;
-                                colunas = corner_colunas;
-                                valid_move = 1;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Jogar aleatoriamente se não houver quinas disponíveis
-                    if (!valid_move) {
-                        while (!valid_move) {
-                            linha = rand() % TAMANHO;
-                            colunas = rand() % TAMANHO;
-
-                            if (board[linha][colunas] == ' ') {
-                                valid_move = 1;
-                            }
-                        }
-                    }
-                    
-                } else if (dificuldade == 3) {
-                    // Estratégia para o modo Expert (dificuldade máxima)
-                    
-
-                    for (int i = 0; i < TAMANHO; i++) {
-                        for (int j = 0; j < TAMANHO; j++) {
-                            if (board[i][j] == ' ') {
-                                linha = i;
-                                colunas = j;
-                                valid_move = 1;
-                                break;
-                            }
-                        }
-
-                        if (valid_move) {
-                            break;
-                        }
-                    }
-                }
-
-                board[linha][colunas] = 'O';
-            }
-
-            turn++;
-            empty_spots--;
         }
+
+        printf("\n");
+
+        printf("Empate! O jogo terminou sem vencedores.\n");
     }
 
-    printf("\nPressione qualquer tecla para continuar...\n");
-    getchar();
-    getchar(); // Aguardar o usuário pressionar uma tecla
-}
+    // Perguntar se quer jogar novamente
+    char opcao;
+    printf("\nDeseja jogar novamente? (S/N): ");
+    scanf(" %c", &opcao);
 
-void choose_dificuldade(Player *player) {
-    int dificuldade;
-
-    printf("Escolha a dificuldade:\n");
-    printf("1. Easy\n");
-    printf("2. Hard\n");
-    printf("3. Expert\n");
-    printf("Digite a opcao: ");
-    scanf("%d", &dificuldade);
-
-    while (dificuldade < 1 || dificuldade > 3) {
-        printf("Opcao invalida. Tente novamente: ");
-        scanf("%d", &dificuldade);
+    if (opcao == 'S' || opcao == 's') {
+        jogar(jogador, Ojogador);
     }
-
-    player->dificuldade = dificuldade;
 }
 
-void display_ranking(Player *players, int num_players) {
-    clear_screen();
-    printf("===== RANKING =====\n\n");
-    printf("NICKNAME\tVITORIAS\tDERROTAS\n");
-    printf("---------\t--------\t--------\n");
-
-    for (int i = 0; i < num_players; i++) {
-        printf("%s\t\t%d\t\t\t%d\n", players[i].name, players[i].wins, players[i].losses);
-    }
-
-    printf("\nPressione qualquer tecla para continuar...\n");
-    getchar();
-    getchar();
-}
-
-void display_sobre() {
+void exibirSobre() {
     clear_screen();
     printf("===== SOBRE =====\n\n");
     printf("O Jogo da Velha e um jogo popular que envolve\n");
@@ -351,25 +273,88 @@ void display_sobre() {
     getchar();
 }
 
-void load_ranking(Player *players, int *num_players) {
+void clear_screen() {
+    system("cls");
+}
+
+void display_ranking(Player *jogador, int Ojogador) {
+    clear_screen();
+    printf("===== RANKING =====\n\n");
+    printf("NICKNAME\tVITORIAS\tDERROTAS\n");
+    printf("---------\t--------\t--------\n");
+
+    for (int i = 0; i < Ojogador; i++) {
+        printf("%s\t\t%d\t\t\t%d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
+    }
+
+    printf("\nPressione qualquer tecla para continuar...\n");
+    getchar();
+    getchar();
+}
+
+void load_ranking(Player *jogador, int *Ojogador) {
     FILE *file = fopen(ARQUIVO, "r");
     if (file != NULL) {
         while (!feof(file)) {
-            if (fscanf(file, "%s %d %d", players[*num_players].name, &(players[*num_players].wins),
-                       &(players[*num_players].losses)) == 3) {
-                (*num_players)++;
+            if (fscanf(file, "%s %d %d", jogador[*Ojogador].name, &(jogador[*Ojogador].wins),
+                       &(jogador[*Ojogador].losses)) != 3) {
+                break;
             }
+            (*Ojogador)++;
         }
         fclose(file);
     }
 }
 
-void save_ranking(Player *players, int num_players) {
+void save_ranking(Player *jogador, int Ojogador) {
     FILE *file = fopen(ARQUIVO, "w");
     if (file != NULL) {
-        for (int i = 0; i < num_players; i++) {
-            fprintf(file, "%s %d %d\n", players[i].name, players[i].wins, players[i].losses);
+        for (int i = 0; i < Ojogador; i++) {
+            fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
         }
         fclose(file);
+        printf("Ranking salvo com sucesso!\n");
+    } else {
+        printf("Nao foi possível salvar o ranking.\n");
     }
+}
+
+void Adificuldade(Player *player) {
+    printf("Escolha a dificuldade do jogo:\n");
+    printf("1 - Facil\n");
+    printf("2 - Medio\n");
+    printf("3 - Dificil\n");
+    printf("Digite a opcao desejada: ");
+    scanf("%d", &(player->dificuldade));
+}
+
+int check_victory(char tabuleiro[TAMANHO][TAMANHO], char jogador_atual) {
+    int i, j;
+    int vitoria = 0;
+
+    // Verificar linhas
+    for (i = 0; i < TAMANHO; i++) {
+        if (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual) {
+            vitoria = 1;
+            break;
+        }
+    }
+
+    // Verificar colunas
+    for (j = 0; j < TAMANHO; j++) {
+        if (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual) {
+            vitoria = 1;
+            break;
+        }
+    }
+
+    // Verificar diagonais
+    if (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual) {
+        vitoria = 1;
+    }
+    if (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual) {
+        vitoria = 1;
+    }
+
+    return vitoria;
 }
