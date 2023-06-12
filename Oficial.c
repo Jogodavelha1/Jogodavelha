@@ -9,6 +9,7 @@
 
 typedef struct {
     char name[NOME];
+    char symbol;
     int wins;
     int losses;
     int dificuldade;
@@ -44,11 +45,14 @@ int main() {
                 printf("Bem-vindo ao jogo da velha!\n");
                 printf("Digite seu NickName: ");
                 scanf("%s", jogador[Ojogador].name);
+                printf("Digite o simbolo para o jogador (X ou O): ");
+                scanf(" %c", &jogador[Ojogador].symbol);
                 jogador[Ojogador].wins = 0;
                 jogador[Ojogador].losses = 0;
                 Adificuldade(&jogador[Ojogador]);
                 jogar(&jogador[Ojogador], &Ojogador);
                 Ojogador++;
+
                 break;
             case 2:
                 display_ranking(jogador, Ojogador);
@@ -86,7 +90,7 @@ void jogar(Player *jogador, int *Ojogador) {
     int i, j;
     int jogadas = 0;
     int vitoria = 0;
-    char jogador_atual = 'X';
+    char jogador_atual = jogador->symbol;
 
 
     // Inicializar tabuleiro
@@ -192,26 +196,88 @@ void jogar(Player *jogador, int *Ojogador) {
         }
     }
 }
+            }else if (jogador->dificuldade == 3) {
+    int block = 0;
+    int win = 0;
 
-
-            } else {
-
-                // (ainda precisa ser implementada a dificuldade 3)
-                int linha, coluna;
-                do {
-                    linha = rand() % TAMANHO;
-                    coluna = rand() % TAMANHO;
-                } while (tabuleiro[linha][coluna] != ' ');
-
-                // Realizar jogada da máquina
-                tabuleiro[linha][coluna] = jogador_atual;
+    // Verificar se a máquina pode ganhar
+    for (i = 0; i < TAMANHO; i++) {
+        for (j = 0; j < TAMANHO; j++) {
+            if (tabuleiro[i][j] == ' ') {
+                tabuleiro[i][j] = 'O';
+                if (check_victory(tabuleiro, 'O')) {
+                    // Fazer jogada de vitória
+                    win = 1;
+                    break;
+                }
+                tabuleiro[i][j] = ' ';
             }
         }
+        if (win) {
+            break;
+        }
+    }
 
+    // Verificar se a máquina precisa bloquear o jogador
+    if (!win) {
+        for (i = 0; i < TAMANHO; i++) {
+            for (j = 0; j < TAMANHO; j++) {
+                if (tabuleiro[i][j] == ' ') {
+                    tabuleiro[i][j] = 'X';
+                    if (check_victory(tabuleiro, 'X')) {
+                        // Fazer jogada de bloqueio
+                        tabuleiro[i][j] = 'O';
+                        block = 1;
+                        break;
+                    }
+                    tabuleiro[i][j] = ' ';
+                }
+            }
+            if (block) {
+                break;
+            }
+        }
+    }
+
+    // Bloquear usuário quando ele pega duas diagonais
+    if (!block && !win) {
+        // Verificar se o usuário pegou duas diagonais
+        if (tabuleiro[0][0] == 'X' && tabuleiro[2][2] == 'X') {
+            if (tabuleiro[0][1] == ' ') {
+                tabuleiro[0][1] = 'O';
+            } else {
+                tabuleiro[1][2] = 'O';
+            }
+        } else if (tabuleiro[0][2] == 'X' && tabuleiro[2][0] == 'X') {
+            if (tabuleiro[1][1] == ' ') {
+                tabuleiro[1][1] = 'O';
+            } else {
+                tabuleiro[0][1] = 'O';
+            }
+        } else {
+            // Fazer jogada padrão
+            if (tabuleiro[1][1] == ' ') {
+                tabuleiro[1][1] = 'O';
+            } else {
+                // Tentar jogar nas diagonais
+                int diagonal[4][2] = {{0, 0}, {0, TAMANHO-1}, {TAMANHO-1, 0}, {TAMANHO-1, TAMANHO-1}};
+                for (int k = 0; k < 4; k++) {
+                    int x = diagonal[k][0];
+                    int y = diagonal[k][1];
+                    if (tabuleiro[x][y] == ' ') {
+                        tabuleiro[x][y] = 'O';
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+        }
         // Verificar vitória
         if (check_victory(tabuleiro, jogador_atual)) {
             vitoria = 1;
-            if (jogador_atual == 'X') {
+            if (jogador_atual == jogador->symbol) {
                 printf("Parabens, voce venceu!\n");
                 jogador->wins++;
                         printf("  1   2   3\n");
@@ -326,7 +392,7 @@ void display_ranking(Player *jogador, int Ojogador) {
 }
 
 void load_ranking(Player *jogador, int *Ojogador) {
-    FILE *file = fopen(ARQUIVO, "r");
+    FILE *file = fopen(ARQUIVO, "r+");
     if (file != NULL) {
         while (!feof(file)) {
             if (fscanf(file, "%s %d %d", jogador[*Ojogador].name, &(jogador[*Ojogador].wins),
@@ -340,7 +406,7 @@ void load_ranking(Player *jogador, int *Ojogador) {
 }
 
 void save_ranking(Player *jogador, int Ojogador) {
-    FILE *file = fopen(ARQUIVO, "w");
+    FILE *file = fopen(ARQUIVO, "w+");
     if (file != NULL) {
         for (int i = 0; i < Ojogador; i++) {
             fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
