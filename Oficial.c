@@ -13,7 +13,7 @@ typedef struct {
     int wins;
     int losses;
     int dificuldade;
-    int modo_jogo; // Adicionado o modo de jogo (0 para Jogador vs Jogador, 1 para Jogador vs Máquina)
+    int modo_jogo;
 } Player;
 
 void exibirMenu();
@@ -54,7 +54,7 @@ int main() {
 
                 break;
                  case 2:
-        // Código para Jogador vs Jogador
+       
         clear_screen();
         printf("Bem-vindo ao jogo da velha (Jogador vs Jogador)!\n");
         printf("Digite o nome do primeiro jogador: ");
