@@ -175,7 +175,7 @@ void jogar(Player *jogador, int *Ojogador) {
     else {
         // Jogador vs Máquina
         if (jogador_atual == 'X') {
-            printf("%s, sua vez! Digite a posicao (1-9): ", jogador->name);
+            printf("%s, sua vez!: ", jogador->name);
             int linha, coluna;
 
             printf("Digite a linha (1-%d): ", TAMANHO);
