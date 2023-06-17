@@ -62,8 +62,8 @@ int main() {
         jogador[Ojogador].symbol = 'X';
         jogador[Ojogador].wins = 0;
         jogador[Ojogador].losses = 0;
-        jogador[Ojogador].dificuldade = 0; // Defina uma dificuldade 0 para Jogador vs Jogador
-        jogador[Ojogador].modo_jogo = 0; // Defina o modo de jogo como 0 para Jogador vs Jogador
+        jogador[Ojogador].dificuldade = 0; 
+        jogador[Ojogador].modo_jogo = 0; 
         Ojogador++;
 
         clear_screen();
@@ -73,8 +73,8 @@ int main() {
         jogador[Ojogador].symbol = 'O';
         jogador[Ojogador].wins = 0;
         jogador[Ojogador].losses = 0;
-        jogador[Ojogador].dificuldade = 0; // Defina uma dificuldade 0 para Jogador vs Jogador
-        jogador[Ojogador].modo_jogo = 0; // Defina o modo de jogo como 0 para Jogador vs Jogador
+        jogador[Ojogador].dificuldade = 0;
+        jogador[Ojogador].modo_jogo = 0; 
         Ojogador++;
 
         jogar(&jogador[Ojogador - 2], &Ojogador - 1);
