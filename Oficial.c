@@ -5,7 +5,7 @@
 #define TAMANHO 3
 #define JOGADORES 100
 #define NOME 16 // Aumentei o tamanho do campo de nome para 16 para considerar o caractere nulo ('\0')
-#define ARQUIVO "ranking.txt"
+#define ARQUIVO "ranking.csv"
 
 typedef struct {
     char name[NOME];
@@ -13,6 +13,7 @@ typedef struct {
     int wins;
     int losses;
     int dificuldade;
+    int modo_jogo; // Adicionado o modo de jogo (0 para Jogador vs Jogador, 1 para Jogador vs Máquina)
 } Player;
 
 void exibirMenu();
@@ -52,20 +53,46 @@ int main() {
                 Ojogador++;
 
                 break;
-            case 2:
+                 case 2:
+        // Código para Jogador vs Jogador
+        clear_screen();
+        printf("Bem-vindo ao jogo da velha (Jogador vs Jogador)!\n");
+        printf("Digite o nome do primeiro jogador: ");
+        scanf("%s", jogador[Ojogador].name);
+        jogador[Ojogador].symbol = 'X';
+        jogador[Ojogador].wins = 0;
+        jogador[Ojogador].losses = 0;
+        jogador[Ojogador].dificuldade = 0; // Defina uma dificuldade 0 para Jogador vs Jogador
+        jogador[Ojogador].modo_jogo = 0; // Defina o modo de jogo como 0 para Jogador vs Jogador
+        Ojogador++;
+
+        clear_screen();
+        printf("Bem-vindo ao jogo da velha (Jogador vs Jogador)!\n");
+        printf("Digite o nome do segundo jogador: ");
+        scanf("%s", jogador[Ojogador].name);
+        jogador[Ojogador].symbol = 'O';
+        jogador[Ojogador].wins = 0;
+        jogador[Ojogador].losses = 0;
+        jogador[Ojogador].dificuldade = 0; // Defina uma dificuldade 0 para Jogador vs Jogador
+        jogador[Ojogador].modo_jogo = 0; // Defina o modo de jogo como 0 para Jogador vs Jogador
+        Ojogador++;
+
+        jogar(&jogador[Ojogador - 2], &Ojogador - 1);
+        break;    
+            case 3:
                 display_ranking(jogador, Ojogador);
                 break;
-            case 3:
+            case 4:
                 exibirSobre();
                 break;
-            case 4:
-                save_ranking(jogador, Ojogador);
-                break;
+            case 5:
+            save_ranking(jogador, Ojogador);
+            break;
             default:
                 printf("Opcao invalida. Tente novamente.\n");
                 break;
         }
-    } while (menu1 != 4);
+    } while (menu1 != 5);
 
     clear_screen();
     printf("Obrigado por jogar!\n");
@@ -75,10 +102,11 @@ int main() {
 
 void exibirMenu() {
     printf("\n===== MENU =====\n");
-    printf("1. Jogar\n");
-    printf("2. Ranking\n");
-    printf("3. Sobre\n");
-    printf("4. Sair\n");
+    printf("1. Jogar contra a Maquina\n");
+    printf("2. Jogar contra outro Jogador\n");
+    printf("3. Ranking\n");
+    printf("4. Sobre\n");
+    printf("5. Sair\n");
     printf("================\n");
     printf("Escolha uma opcao: ");
 }
@@ -100,42 +128,64 @@ void jogar(Player *jogador, int *Ojogador) {
 
     // Loop do jogo
     while (jogadas < TAMANHO * TAMANHO && !vitoria) {
-        clear_screen();
-        printf("Jogador: %s\n", jogador->name);
-        printf("Dificuldade: %d\n\n", jogador->dificuldade);
-        printf("===== JOGO DA VELHA =====\n\n");
+    clear_screen();
+    printf("Jogador: %s\n", jogador->name);
+    printf("Dificuldade: %d\n\n", jogador->dificuldade);
+    printf("===== JOGO DA VELHA =====\n\n");
 
-        // Exibir tabuleiro
-        printf("  1   2   3\n");
-        for (i = 0; i < TAMANHO; i++) {
-            printf("%d ", i + 1);
-            for (j = 0; j < TAMANHO; j++) {
-                printf(" %c ", tabuleiro[i][j]);
-                if (j < TAMANHO - 1) {
-                    printf("|");
-                }
-            }
-            printf("\n");
-            if (i < TAMANHO - 1) {
-                printf("  ---+---+---\n");
+    // Exibir tabuleiro
+    printf("  1   2   3\n");
+    for (i = 0; i < TAMANHO; i++) {
+        printf("%d ", i + 1);
+        for (j = 0; j < TAMANHO; j++) {
+            printf(" %c ", tabuleiro[i][j]);
+            if (j < TAMANHO - 1) {
+                printf("|");
             }
         }
-
         printf("\n");
+        if (i < TAMANHO - 1) {
+            printf("  ---+---+---\n");
+        }
+    }
 
+    printf("\n");
+
+    if (jogador->modo_jogo == 0) {
+        // Jogador vs Jogador
+        int linha, coluna;
+        printf("%s, sua vez! : ", jogador->name);
+        
+        printf("Digite a linha (1-%d): ", TAMANHO);
+        scanf("%d", &linha);
+        linha--;
+        
+        printf("Digite a coluna (1-%d): ", TAMANHO);
+        scanf("%d", &coluna);
+        coluna--;
+        
+        if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
+            printf("Posicao invalida. Tente novamente.\n");
+            continue;
+        }
+
+        // Realizar jogada do jogador
+        tabuleiro[linha][coluna] = jogador_atual;
+    }
+    else {
+        // Jogador vs Máquina
         if (jogador_atual == 'X') {
+            printf("%s, sua vez! Digite a posicao (1-9): ", jogador->name);
             int linha, coluna;
 
-            printf("Sua vez de jogar!\n");
             printf("Digite a linha (1-%d): ", TAMANHO);
             scanf("%d", &linha);
-            linha--; 
+            linha--;
 
             printf("Digite a coluna (1-%d): ", TAMANHO);
             scanf("%d", &coluna);
-            coluna--; 
-            
-            
+            coluna--;
+
             if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
                 printf("Posicao invalida. Tente novamente.\n");
                 continue;
@@ -328,7 +378,7 @@ void jogar(Player *jogador, int *Ojogador) {
                 }
             }
         }
-    }
+    }}
     }
 
 
@@ -438,9 +488,37 @@ void exibirSobre() {
 void clear_screen() {
     system("cls");
 }
+int compare_players(const void *a, const void *b) {
+    const Player *player1 = (const Player *)a;
+    const Player *player2 = (const Player *)b;
+
+    // Comparar o número de vitórias (ordem decrescente)
+    if (player1->wins > player2->wins) {
+        return -1;
+    } else if (player1->wins < player2->wins) {
+        return 1;
+    }
+
+    // Se houver empate, comparar o número de derrotas (ordem crescente)
+    if (player1->losses < player2->losses) {
+        return -1;
+    } else if (player1->losses > player2->losses) {
+        return 1;
+    }
+
+    // Se houver empate novamente, comparar os nomes em ordem alfabética
+    return strcmp(player1->name, player2->name);
+}
 
 void display_ranking(Player *jogador, int Ojogador) {
-    clear_screen();
+    if (Ojogador == 0) {
+        printf("O ranking esta vazio.\n");
+        return;
+    }
+
+    // Ordenar o vetor de jogadores
+    qsort(jogador, Ojogador, sizeof(Player), compare_players);
+
     printf("===== RANKING =====\n\n");
     printf("NICKNAME\tVITORIAS\tDERROTAS\n");
     printf("---------\t--------\t--------\n");
@@ -448,10 +526,6 @@ void display_ranking(Player *jogador, int Ojogador) {
     for (int i = 0; i < Ojogador; i++) {
         printf("%s\t\t%d\t\t\t%d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
     }
-
-    printf("\nPressione qualquer tecla para continuar...\n");
-    getchar();
-    getchar();
 }
 
 void load_ranking(Player *jogador, int *Ojogador) {
