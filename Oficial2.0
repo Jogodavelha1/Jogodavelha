@@ -21,6 +21,7 @@ typedef struct {
     int losses;
     int dificuldade;
     int modo_jogo;
+    
 } Player;
 
 void exibirMenu();
@@ -37,6 +38,7 @@ int main() {
     Player jogador[JOGADORES];
     int Ojogador = 0;
     int menu1;
+    
 
     load_ranking(jogador, &Ojogador);
 
@@ -446,16 +448,31 @@ void jogar(Player *jogador, int *Ojogador) {
         }
         // Verificar vitória (Fazer uma para Jogador vs Jogador)
         if (check_victory(tabuleiro, jogador_atual)) {
+    int linha_vencedora_atual = 1;
+    int coluna_vencedora_atual = 1;
+    int diagonal_principal_vencedora_atual = 1;
+    int diagonal_secundaria_vencedora_atual = 1;
+
     vitoria = 1;
     if (jogador_atual == 'X') {
         printf("Parabens, voce venceu!\n");
         jogador->wins++;
-        printf("  1   2   3\n" );
+        printf("  1   2   3\n");
         for (i = 0; i < TAMANHO; i++) {
-            printf( "%d " , i + 1);
+            printf("%d ", i + 1);
             for (j = 0; j < TAMANHO; j++) {
                 if (tabuleiro[i][j] == 'X') {
-                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
+                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
+                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
+                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
+                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else {
+                        printf(vermelho"%c"normal, tabuleiro[i][j]);
+                    }
                 } else if (tabuleiro[i][j] == 'O') {
                     printf(azul"%c"normal, tabuleiro[i][j]);
                 } else {
@@ -472,21 +489,31 @@ void jogar(Player *jogador, int *Ojogador) {
         }
 
         printf("\n");
-            } else {
-                printf("A maquina venceu!\n");
-                jogador->losses++;
+    } else {
+        printf("A maquina venceu!\n");
+        jogador->losses++;
 
-                    printf("  1   2   3\n" );
-for (i = 0; i < TAMANHO; i++) {
-    printf( "%d " , i + 1);
-    for (j = 0; j < TAMANHO; j++) {
-        if (tabuleiro[i][j] == 'X') {
-            printf(vermelho"%c"normal, tabuleiro[i][j]);
-        } else if (tabuleiro[i][j] == 'O') {
-            printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-        } else {
-            printf("%c", tabuleiro[i][j]);
-        }
+        printf("  1   2   3\n");
+        for (i = 0; i < TAMANHO; i++) {
+            printf("%d ", i + 1);
+            for (j = 0; j < TAMANHO; j++) {
+                if (tabuleiro[i][j] == 'X') {
+                    printf(vermelho"%c"normal, tabuleiro[i][j]);
+                } else if (tabuleiro[i][j] == 'O') {
+                    if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
+                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
+                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
+                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
+                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                    } else {
+                        printf(azul"%c"normal, tabuleiro[i][j]);
+                    }
+                } else {
+                    printf("%c", tabuleiro[i][j]);
+                }
                 if (j < TAMANHO - 1) {
                     printf(" | ");
                 }
@@ -496,12 +523,12 @@ for (i = 0; i < TAMANHO; i++) {
                 printf(" ---+---+---\n");
             }
         }
-        
+
         printf("Voce perdeu!\n");
 
         printf("\n");
-            }
-        }
+    }
+}
 
         // Alternar jogador
         jogador_atual = (jogador_atual == 'X') ? 'O' : 'X';
@@ -644,31 +671,44 @@ void Adificuldade(Player *player) {
 
 int check_victory(char tabuleiro[TAMANHO][TAMANHO], char jogador_atual) {
     int i, j;
-    int vitoria = 0;
+    int linha_vencedora = 0;  // Variável para verificar se há uma linha vencedora
 
     // Verificar linhas
     for (i = 0; i < TAMANHO; i++) {
         if (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual) {
-            vitoria = 1;
+            linha_vencedora = 1;
             break;
         }
     }
 
     // Verificar colunas
-    for (j = 0; j < TAMANHO; j++) {
-        if (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual) {
-            vitoria = 1;
-            break;
+    if (!linha_vencedora) {
+        for (j = 0; j < TAMANHO; j++) {
+            if (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual) {
+                linha_vencedora = 1;
+                break;
+            }
         }
     }
 
-    // Verificar diagonais
-    if (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual) {
-        vitoria = 1;
-    }
-    if (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual) {
-        vitoria = 1;
+    // Verificar diagonal principal
+    if (!linha_vencedora) {
+        if (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual) {
+            linha_vencedora = 1;
+        }
     }
 
-    return vitoria;
+    // Verificar diagonal secundária
+    if (!linha_vencedora) {
+        if (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual) {
+            linha_vencedora = 1;
+        }
+    }
+
+    if (linha_vencedora) {
+        printf("\n%sVitoria! O jogador %c venceu!%s\n", verde, jogador_atual, normal);
+        return 1;
+    }
+
+    return 0;
 }
