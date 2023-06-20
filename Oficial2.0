@@ -8,10 +8,8 @@
 #define JOGADORES 100
 #define NOME 16 // Aumentei o tamanho do campo de nome para 16 para considerar o caractere nulo ('\0')
 #define ARQUIVO "ranking.csv"
-#define verde   "\033[0;32m"
 #define vermelho "\033[0;31m"
 #define azul    "\033[0;34m"
-#define cyano   "\033[0;36m"
 #define normal  "\033[0m"
 
 
@@ -40,14 +38,10 @@ int main() {
     int Ojogador = 0;
     int menu1;
     
-
     load_ranking(jogador, &Ojogador);
-
     clear_screen();
+        printf("\n\t\t\t\t\t\t\x1B[1;32;5mBem-vindo ao Jogo da Velha!\x1B[0m\n\n");
     
-    printf("\n\t\t\t\t\t\t\x1B[1;32;5mBem-vindo ao Jogo da Velha!\x1B[0m\n\n");
-    
-
     do {
         exibirMenu();
         scanf("%d", &menu1);
@@ -65,32 +59,32 @@ int main() {
                 Ojogador++;
 
                 break;
-                 case 2:
+            case 2:
        
-        clear_screen();
-        printf("Bem-vindo ao jogo da velha (Jogador vs Jogador)!\n");
-        printf("Digite o nome do primeiro jogador: ");
-        scanf("%15s", jogador[Ojogador].name);
-        jogador[Ojogador].symbol = 'X';
-        jogador[Ojogador].wins = 0;
-        jogador[Ojogador].losses = 0;
-        jogador[Ojogador].dificuldade = 0; 
-        jogador[Ojogador].modo_jogo = 0; 
-        Ojogador++;
+                clear_screen();
+                printf("\t\t\t\t\t\t\x1B[1;5;35m(Jogador vs Jogador)\x1B[0m\n\n");
+                printf("\x1B[1;35mDigite o nome do primeiro jogador: \x1B[0m");
+                scanf("%15s", jogador[Ojogador].name);
+                jogador[Ojogador].symbol = 'X';
+                jogador[Ojogador].wins = 0;
+                jogador[Ojogador].losses = 0;
+                jogador[Ojogador].dificuldade = 0; 
+                jogador[Ojogador].modo_jogo = 0; 
+                Ojogador++;
 
-        clear_screen();
-        printf("Bem-vindo ao jogo da velha (Jogador vs Jogador)!\n");
-        printf("Digite o nome do segundo jogador: ");
-        scanf("%15s", jogador[Ojogador].name);
-        jogador[Ojogador].symbol = 'O';
-        jogador[Ojogador].wins = 0;
-        jogador[Ojogador].losses = 0;
-        jogador[Ojogador].dificuldade = 0;
-        jogador[Ojogador].modo_jogo = 0; 
-        Ojogador++;
+                clear_screen();
+                printf("\t\t\t\t\t\t\x1B[1;5;35m(Jogador vs Jogador)\x1B[0m\n\n");
+                printf("\x1B[1;35mDigite o nome do segundo jogador: \x1B[0m");
+                scanf("%15s", jogador[Ojogador].name);
+                jogador[Ojogador].symbol = 'O';
+                jogador[Ojogador].wins = 0;
+                jogador[Ojogador].losses = 0;
+                jogador[Ojogador].dificuldade = 0;
+                jogador[Ojogador].modo_jogo = 0; 
+                Ojogador++;
 
-        jogar(&jogador[Ojogador - 2], &Ojogador - 1);
-        break;    
+                jogar(&jogador[Ojogador - 2], &Ojogador - 1);
+                break;    
             case 3:
                 display_ranking(jogador, Ojogador);
                 break;
@@ -98,78 +92,77 @@ int main() {
                 exibirSobre();
                 break;
             case 5:
-            save_ranking(jogador, Ojogador);
-            break;
-            default:
-                printf("Opcao invalida. Tente novamente.\n");
+                save_ranking(jogador, Ojogador);
                 break;
-        }
+                default:
+                    printf("Opcao invalida. Tente novamente.\n");
+                break;
+            }
     } while (menu1 != 5);
 
-    clear_screen();
-    printf("Obrigado por jogar!\n");
+        clear_screen();
+        printf("Obrigado por jogar!\n");
     
     return 0;
 }
 
-void exibirMenu() {
-    printf("\x1B[1m\n\x1B[0m");
-    printf("\n\x1B[35m========================================================\x1B[0m MENU \x1B[35;1m==========================================================\x1B[0m\n\n");
-    printf("\x1B[32;1m1.\x1B[0m \x1B[1mJogar contra a Maquina\x1B[0m\n\n");
-    printf("\x1B[32;1m2.\x1B[0m\x1B[1m Jogar contra outro Jogador\x1B[0m\n\n");
-    printf("\x1B[32;1m3.\x1B[0m\x1B[1m Ranking\x1B[0m\n\n");
-    printf("\x1B[32;1m4.\x1B[0m\x1B[1m Sobre\x1B[0m\n\n");
-    printf("\x1B[32;1m5.\x1B[0m \x1B[1mSair\x1B[0m\n\n");
-    printf("\x1B[35;1m===========================================================\x1B[0m\x1B[35m=============================================================\x1B[0m\n");
-    printf("\n\x1B[1mEscolha uma opcao:\x1B[0m ");
-}
-
-void jogar(Player *jogador, int *Ojogador) {
-    char tabuleiro[TAMANHO][TAMANHO];
-    int i, j;
-    int jogadas = 0;
-    int vitoria = 0;
-    char jogador_atual = 'X';
-
-
-    // Inicializar tabuleiro
-    for (i = 0; i < TAMANHO; i++) {
-        for (j = 0; j < TAMANHO; j++) {
-            tabuleiro[i][j] = ' ';
-        }
+        void exibirMenu() {
+        printf("\x1B[1m\n\x1B[0m");
+        printf("\n\x1B[35m========================================================\x1B[0m MENU \x1B[35;1m==========================================================\x1B[0m\n\n");
+        printf("\x1B[32;1m1.\x1B[0m \x1B[1mJogar contra a Maquina\x1B[0m\n\n");
+        printf("\x1B[32;1m2.\x1B[0m\x1B[1m Jogar contra outro Jogador\x1B[0m\n\n");
+        printf("\x1B[32;1m3.\x1B[0m\x1B[1m Ranking\x1B[0m\n\n");
+        printf("\x1B[32;1m4.\x1B[0m\x1B[1m Sobre\x1B[0m\n\n");
+        printf("\x1B[32;1m5.\x1B[0m \x1B[1mSair\x1B[0m\n\n");
+        printf("\x1B[35;1m===========================================================\x1B[0m\x1B[35m=============================================================\x1B[0m\n");
+        printf("\n\x1B[1mEscolha uma opcao:\x1B[0m ");
     }
 
-    // Loop do jogo
-    while (jogadas < TAMANHO * TAMANHO && !vitoria) {
-    clear_screen();
-    if(jogador->dificuldade==0){
-        if(jogador_atual=='X'){
-        printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name);
-        }
-        if(jogador_atual=='O'){
-        printf("Jogador: \x1B[32;5;1m%s\n\x1B[0m", jogador[1].name);
-        }
-    }
-    else{
-       printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name); 
-    }
-    printf("Dificuldade:\x1B[32;1m %d\n\n\x1B[0m", jogador->dificuldade);
-    printf("\n\x1B[35;1m====================================================\x1B[0m  \x1B[1;5mJOGO DA VELHA\x1B[0m \x1B[35;1m===================================================\x1B[0m\n\n");
+    void jogar(Player *jogador, int *Ojogador) {
+        char tabuleiro[TAMANHO][TAMANHO];
+        int i, j;
+        int jogadas = 0;
+        int vitoria = 0;
+        char jogador_atual = 'X';
 
-    // Exibir tabuleiro
-    printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
-    for (i = 0; i < TAMANHO; i++) {
-        printf( "\t\t\t\t\t\t     %d  " , i + 1);
-        for (j = 0; j < TAMANHO; j++) {
-            if (tabuleiro[i][j] == 'X') {
-                printf("%s%c%s", vermelho, tabuleiro[i][j], normal);
-                printf("\a");
-            } else if (tabuleiro[i][j] == 'O') {
-                printf("%s%c%s", azul, tabuleiro[i][j], normal);
-                printf("\a");
-            } else {
-                printf("%c", tabuleiro[i][j]);
+
+        // Inicializar tabuleiro
+        for (i = 0; i < TAMANHO; i++) {
+            for (j = 0; j < TAMANHO; j++) {
+                tabuleiro[i][j] = ' ';
             }
+        }
+
+        // Loop do jogo
+        while (jogadas < TAMANHO * TAMANHO && !vitoria) {
+        clear_screen();
+        if(jogador->dificuldade==0){
+            if(jogador_atual=='X'){
+                printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name);
+            }
+        if(jogador_atual=='O'){
+            printf("Jogador: \x1B[32;5;1m%s\n\x1B[0m", jogador[1].name);
+        }
+        }else{
+            printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name); 
+        }
+
+        printf("Dificuldade:\x1B[32;1m %d\n\n\x1B[0m", jogador->dificuldade);
+        printf("\n\x1B[35;1m====================================================\x1B[0m  \x1B[1;5mJOGO DA VELHA\x1B[0m \x1B[35;1m===================================================\x1B[0m\n\n");
+        // Exibir tabuleiro
+        printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
+        for (i = 0; i < TAMANHO; i++) {
+            printf( "\t\t\t\t\t\t     %d  " , i + 1);
+                for (j = 0; j < TAMANHO; j++) {
+                    if (tabuleiro[i][j] == 'X') {
+                        printf("%s%c%s", vermelho, tabuleiro[i][j], normal);
+                        printf("\a");
+                    } else if (tabuleiro[i][j] == 'O') {
+                        printf("%s%c%s", azul, tabuleiro[i][j], normal);
+                        printf("\a");
+                    } else {
+                        printf("%c", tabuleiro[i][j]);
+                    }
             if (j < TAMANHO - 1) {
                 printf(" | ");
                 }
@@ -441,13 +434,11 @@ void jogar(Player *jogador, int *Ojogador) {
                 }
             }
         }
-    }}
     }
-
-            }
-
-
+}
+    }
         }
+    }
         // Verificar vitória (Fazer uma para Jogador vs Jogador)
         if (check_victory(tabuleiro, jogador_atual)) {
     int linha_vencedora_atual = 1;
@@ -457,7 +448,8 @@ void jogar(Player *jogador, int *Ojogador) {
 
     vitoria = 1;
     if (jogador_atual == 'X') {
-        printf("Parabens %s, voce venceu!\n", jogador->name);
+        printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
+        
         jogador->wins++;
         printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
         for (i = 0; i < TAMANHO; i++) {
@@ -489,7 +481,7 @@ void jogar(Player *jogador, int *Ojogador) {
                 printf("\t\t\t\t\t\t       ---+---+---\n");
             }
         }
-
+        printf("Parabens %s, voce venceu!\n", jogador->name);
         printf("\n");
     } else {
         printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
@@ -526,13 +518,11 @@ void jogar(Player *jogador, int *Ojogador) {
                 printf("\t\t\t\t\t\t       ---+---+---\n");
             }
         }
-
         printf("Voce perdeu %s, a maquina venceu!\n", jogador->name);
 
         printf("\n");
     }
 }
-
         // Alternar jogador
         jogador_atual = (jogador_atual == 'X') ? 'O' : 'X';
         jogadas++;
@@ -566,7 +556,6 @@ for (i = 0; i < TAMANHO; i++) {
                 printf("\t\t\t\t\t\t       ---+---+---\n");
             }
         }
-
         printf("\n");
 
         printf("Empate! O jogo terminou sem vencedores.\n");
@@ -659,7 +648,25 @@ void save_ranking(Player *jogador, int Ojogador) {
     FILE *file = fopen(ARQUIVO, "w");
     if (file != NULL) {
         for (int i = 0; i < Ojogador; i++) {
-            fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
+            
+            int j;
+            int repetido = 0; // variável para verificar se o nome é repetido
+            for (j = 0; j < i; j++) {
+                if (strcmp(jogador[i].name, jogador[j].name) == 0) {
+                    // Nome repetido encontrado, somar as vitórias e derrotas
+                    jogador[j].wins += jogador[i].wins;
+                    jogador[j].losses += jogador[i].losses;
+                    repetido = 1; // define a variável repetido como 1
+                    break;
+                }
+            }
+            if (j == i && !repetido) {
+                // Nome não repetido, escrever no arquivo
+                fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
+                
+    
+                (Ojogador)++;
+            }
         }
         fclose(file);
         printf("Ranking salvo com sucesso!\n");
@@ -667,6 +674,8 @@ void save_ranking(Player *jogador, int Ojogador) {
         printf("Nao foi possível salvar o ranking.\n");
     }
 }
+
+
 
 void Adificuldade(Player *player) {
     system("cls");
