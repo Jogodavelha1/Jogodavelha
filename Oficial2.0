@@ -32,6 +32,7 @@ void load_ranking(Player *jogador, int *Ojogador);
 void display_ranking(Player *jogador, int Ojogador);
 void Adificuldade(Player *player);
 int check_victory(char tabuleiro[TAMANHO][TAMANHO], char jogador_atual);
+int verificar_jogador(Player *players, int num_players, const char *name);
 
 int main() {
     Player jogador[JOGADORES];
@@ -40,8 +41,15 @@ int main() {
     
     load_ranking(jogador, &Ojogador);
     clear_screen();
-        printf("\n\t\t\t\t\t\t\x1B[1;32;5mBem-vindo ao Jogo da Velha!\x1B[0m\n\n");
-    
+    char texto[] = "\n\t\t\t\t\t\t\x1B[1;32;5mBem-vindo ao Jogo da Velha!\x1B[0m\n\n";
+    int tamanho = sizeof(texto) - 1;  // Tamanho do texto, desconsiderando o caractere nulo
+    for (int i = 0; i < tamanho; i++) {
+        // Piscar letra por letra
+        printf("%c", texto[i]);
+        fflush(stdout);  // Limpa o buffer de saída
+
+        Sleep(150);  // Pausa por 300 milissegundos (0.3 segundos)
+    }
     do {
         exibirMenu();
         scanf("%d", &menu1);
@@ -297,7 +305,7 @@ int main() {
     int win = 0;
     int jogadaFeita = 0; // Variável para controlar se a máquina já fez uma jogada nesta rodada
 
-    // Verificar se a máquina pode ganhar jogador->symbol
+    // Verificar se a máquina pode ganhar
     if (!jogadaFeita) {
         for (i = 0; i < TAMANHO; i++) {
             for (j = 0; j < TAMANHO; j++) {
@@ -526,6 +534,7 @@ int main() {
         // Alternar jogador
         jogador_atual = (jogador_atual == 'X') ? 'O' : 'X';
         jogadas++;
+        
     }
 
     // Verificar empate
@@ -609,10 +618,18 @@ int compare_players(const void *a, const void *b) {
     // Se houver empate novamente, comparar os nomes em ordem alfabética
     return strcmp(player1->name, player2->name);
 }
+int verificar_jogador(Player *players, int num_players, const char *name) {
+    for (int i = 0; i < num_players; i++) {
+        if (strcmp(players[i].name, name) == 0) {
+            return i;
+        }
+    }
+    return -1;  // Jogador não encontrado
+}
 
 void display_ranking(Player *jogador, int Ojogador) {
     if (Ojogador == 0) {
-        printf("O ranking esta vazio.\n");
+        printf("O ranking está vazio.\n");
         return;
     }
 
@@ -621,14 +638,48 @@ void display_ranking(Player *jogador, int Ojogador) {
     qsort(jogador, Ojogador, sizeof(Player), compare_players);
 
     printf("\x1B[35;1m=======================================================\x1B[0m \x1B[1mRANKING\x1B[0m \x1B[35m =======================================================\x1B[0m\n\n");
-    printf("\x1B[32mNICKNAME\t\t\t\tVITORIAS\t\t\t\tDERROTAS\x1B[0m\n");
-    printf("--------\t\t\t\t--------\t\t\t\t--------\n");
+    printf("\x1B[32mNICKNAME\t\t\tVITORIAS\t\t\t\tDERROTAS\x1B[0m\n");
+    printf("--------\t\t\t--------\t\t\t\t--------\n");
+
+    Player unico_jogador[Ojogador];
+    int num_unico_jogador = 0;
 
     for (int i = 0; i < Ojogador; i++) {
-        //trocar o inteiro para float
-        printf("%s\t\t\t\t\t   %d\t\t\t\t\t   %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
+        // Verificar se o jogador já existe no vetor de jogadores únicos
+        int soma_jogador = verificar_jogador(unico_jogador, num_unico_jogador, jogador[i].name);
+        if (soma_jogador == -1) {
+            // Jogador não existe no vetor, adicioná-lo
+            strcpy(unico_jogador[num_unico_jogador].name, jogador[i].name);
+            unico_jogador[num_unico_jogador].wins = jogador[i].wins;
+            unico_jogador[num_unico_jogador].losses = jogador[i].losses;
+            num_unico_jogador++;
+        } else {
+            // Jogador já existe no vetor, somar as vitórias e derrotas
+            unico_jogador[soma_jogador].wins += jogador[i].wins;
+            unico_jogador[soma_jogador].losses += jogador[i].losses;
+        }
+    }
+
+    // Exibir jogadores únicos no ranking
+    for (int i = 0; i < num_unico_jogador; i++) {
+        // Ajustar o espaçamento do nome para 15 caracteres
+        char nome_formatado[16];
+        snprintf(nome_formatado, sizeof(nome_formatado), "%-15s", unico_jogador[i].name);
+
+        // Verificar se o nome tem 7 ou menos caracteres
+        if (strlen(nome_formatado) <= 7) {
+            // Adicionar caracteres vazios para ter 8 ou mais caracteres
+            for (int j = strlen(nome_formatado); j < 8; j++) {
+                nome_formatado[j] = ' ';
+            }
+            nome_formatado[8] = '\0';  // Adicionar o terminador de string
+        }
+
+        // Trocar o inteiro para float
+        printf("%s\t\t\t   %d\t\t\t\t\t   %d\n", nome_formatado, unico_jogador[i].wins, unico_jogador[i].losses);
     }
 }
+
 
 void load_ranking(Player *jogador, int *Ojogador) {
     FILE *file = fopen(ARQUIVO, "r+");
@@ -648,25 +699,7 @@ void save_ranking(Player *jogador, int Ojogador) {
     FILE *file = fopen(ARQUIVO, "w");
     if (file != NULL) {
         for (int i = 0; i < Ojogador; i++) {
-            
-            int j;
-            int repetido = 0; // variável para verificar se o nome é repetido
-            for (j = 0; j < i; j++) {
-                if (strcmp(jogador[i].name, jogador[j].name) == 0) {
-                    // Nome repetido encontrado, somar as vitórias e derrotas
-                    jogador[j].wins += jogador[i].wins;
-                    jogador[j].losses += jogador[i].losses;
-                    repetido = 1; // define a variável repetido como 1
-                    break;
-                }
-            }
-            if (j == i && !repetido) {
-                // Nome não repetido, escrever no arquivo
-                fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
-                
-    
-                (Ojogador)++;
-            }
+            fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
         }
         fclose(file);
         printf("Ranking salvo com sucesso!\n");
@@ -674,8 +707,6 @@ void save_ranking(Player *jogador, int Ojogador) {
         printf("Nao foi possível salvar o ranking.\n");
     }
 }
-
-
 
 void Adificuldade(Player *player) {
     system("cls");
