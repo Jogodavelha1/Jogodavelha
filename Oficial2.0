@@ -58,8 +58,10 @@ int main() {
             case 1:
                  clear_screen();
                 printf("\n\t\t\t\t\t\t\x1B[1;32;5mPara dar inicio a partida insira seu nome!\x1B[0m\n\n");
+                fflush(stdin); // Limpa o buffer de entrada
                 printf("\x1B[32;1mDigite seu NickName:\x1B[0m ");
-                scanf("%15s", jogador[Ojogador].name);
+                fgets(jogador[Ojogador].name, sizeof(jogador[Ojogador].name), stdin);
+                jogador[Ojogador].name[strcspn(jogador[Ojogador].name, "\n")] = '\0';
                 jogador[Ojogador].wins = 0;
                 jogador[Ojogador].losses = 0;
                 Adificuldade(&jogador[Ojogador]);
@@ -71,8 +73,10 @@ int main() {
        
                 clear_screen();
                 printf("\t\t\t\t\t\t\x1B[1;5;35m(Jogador vs Jogador)\x1B[0m\n\n");
+                fflush(stdin);
                 printf("\x1B[1;35mDigite o nome do primeiro jogador: \x1B[0m");
-                scanf("%15s", jogador[Ojogador].name);
+                fgets(jogador[Ojogador].name, sizeof(jogador[Ojogador].name), stdin);
+                jogador[Ojogador].name[strcspn(jogador[Ojogador].name, "\n")] = '\0';
                 jogador[Ojogador].symbol = 'X';
                 jogador[Ojogador].wins = 0;
                 jogador[Ojogador].losses = 0;
@@ -82,8 +86,10 @@ int main() {
 
                 clear_screen();
                 printf("\t\t\t\t\t\t\x1B[1;5;35m(Jogador vs Jogador)\x1B[0m\n\n");
+                fflush(stdin);
                 printf("\x1B[1;35mDigite o nome do segundo jogador: \x1B[0m");
-                scanf("%15s", jogador[Ojogador].name);
+                fgets(jogador[Ojogador].name, sizeof(jogador[Ojogador].name), stdin);
+                jogador[Ojogador].name[strcspn(jogador[Ojogador].name, "\n")] = '\0';
                 jogador[Ojogador].symbol = 'O';
                 jogador[Ojogador].wins = 0;
                 jogador[Ojogador].losses = 0;
@@ -707,6 +713,7 @@ void save_ranking(Player *jogador, int Ojogador) {
         printf("Nao foi possível salvar o ranking.\n");
     }
 }
+
 
 void Adificuldade(Player *player) {
     system("cls");
