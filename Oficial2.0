@@ -37,7 +37,7 @@ int verificar_jogador(Player *players, int num_players, const char *name);
 int main() {
     Player jogador[JOGADORES];
     int Ojogador = 0;
-    int menu1;
+    char menu1;
     
     load_ranking(jogador, &Ojogador);
     clear_screen();
@@ -52,11 +52,16 @@ int main() {
     }
     do {
         exibirMenu();
-        scanf("%d", &menu1);
+        do{
+            scanf(" %c",&menu1);
+            if(menu1!='1'&&menu1>='2'&&menu1>='3'&&menu1>='4'&&menu1>='5'){
+                printf("\a");
+            }
 
+        }while(menu1!='1'&&menu1>='2'&&menu1>='3'&&menu1>='4'&&menu1>='5');
         switch (menu1) {
-            case 1:
-                 clear_screen();
+            case '1':
+                clear_screen();
                 printf("\n\t\t\t\t\t\t\x1B[1;32;5mPara dar inicio a partida insira seu nome!\x1B[0m\n\n");
                 fflush(stdin); // Limpa o buffer de entrada
                 printf("\x1B[32;1mDigite seu NickName:\x1B[0m ");
@@ -69,7 +74,7 @@ int main() {
                 Ojogador++;
 
                 break;
-            case 2:
+            case '2':
        
                 clear_screen();
                 printf("\t\t\t\t\t\t\x1B[1;5;35m(Jogador vs Jogador)\x1B[0m\n\n");
@@ -99,20 +104,20 @@ int main() {
 
                 jogar(&jogador[Ojogador - 2], &Ojogador - 1);
                 break;    
-            case 3:
+            case '3':
                 display_ranking(jogador, Ojogador);
                 break;
-            case 4:
+            case '4':
                 exibirSobre();
                 break;
-            case 5:
+            case '5':
                 save_ranking(jogador, Ojogador);
                 break;
                 default:
                     printf("Opcao invalida. Tente novamente.\n");
                 break;
             }
-    } while (menu1 != 5);
+    } while (menu1 != '5');
 
         clear_screen();
         printf("Obrigado por jogar!\n");
@@ -130,6 +135,8 @@ int main() {
         printf("\x1B[32;1m5.\x1B[0m \x1B[1mSair\x1B[0m\n\n");
         printf("\x1B[35;1m===========================================================\x1B[0m\x1B[35m=============================================================\x1B[0m\n");
         printf("\n\x1B[1mEscolha uma opcao:\x1B[0m ");
+        
+
     }
 
     void jogar(Player *jogador, int *Ojogador) {
@@ -149,24 +156,24 @@ int main() {
 
         // Loop do jogo
         while (jogadas < TAMANHO * TAMANHO && !vitoria) {
-        clear_screen();
-        if(jogador->dificuldade==0){
-            if(jogador_atual=='X'){
-                printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name);
+            clear_screen();
+            if(jogador->dificuldade==0){
+                if(jogador_atual=='X'){
+                    printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name);
+                }
+                if(jogador_atual=='O'){
+                    printf("Jogador: \x1B[32;5;1m%s\n\x1B[0m", jogador[1].name);
+                }
+            }else{
+                printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name); 
             }
-        if(jogador_atual=='O'){
-            printf("Jogador: \x1B[32;5;1m%s\n\x1B[0m", jogador[1].name);
-        }
-        }else{
-            printf("Jogador:\x1B[32;5;1m %s\n\x1B[0m", jogador->name); 
-        }
 
-        printf("Dificuldade:\x1B[32;1m %d\n\n\x1B[0m", jogador->dificuldade);
-        printf("\n\x1B[35;1m====================================================\x1B[0m  \x1B[1;5mJOGO DA VELHA\x1B[0m \x1B[35;1m===================================================\x1B[0m\n\n");
-        // Exibir tabuleiro
-        printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
-        for (i = 0; i < TAMANHO; i++) {
-            printf( "\t\t\t\t\t\t     %d  " , i + 1);
+            printf("Dificuldade:\x1B[32;1m %d\n\n\x1B[0m", jogador->dificuldade);
+            printf("\n\x1B[35;1m====================================================\x1B[0m  \x1B[1;5mJOGO DA VELHA\x1B[0m \x1B[35;1m===================================================\x1B[0m\n\n");
+            // Exibir tabuleiro
+            printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
+            for (i = 0; i < TAMANHO; i++) {
+                printf( "\t\t\t\t\t\t     %d  " , i + 1);
                 for (j = 0; j < TAMANHO; j++) {
                     if (tabuleiro[i][j] == 'X') {
                         printf("%s%c%s", vermelho, tabuleiro[i][j], normal);
@@ -177,592 +184,642 @@ int main() {
                     } else {
                         printf("%c", tabuleiro[i][j]);
                     }
-            if (j < TAMANHO - 1) {
-                printf(" | ");
+                    if (j < TAMANHO - 1) {
+                        printf(" | ");
+                    }
+                }
+                printf("\n");
+                if (i < TAMANHO - 1) {
+                    printf("\t\t\t\t\t\t       ---+---+---\n");
                 }
             }
+
             printf("\n");
-            if (i < TAMANHO - 1) {
-                printf("\t\t\t\t\t\t       ---+---+---\n");
-        }
-    }
 
-    printf("\n");
-
-    if (jogador->modo_jogo == 0) {
-        // Jogador vs Jogador
-        if(jogador_atual=='X'){
+            if (jogador->modo_jogo == 0) {
+                // Jogador vs Jogador
+                if(jogador_atual=='X'){
             
         
-        int linha, coluna;
-        printf("\x1B[31;5;1m%s\x1B[0m, sua vez! : ", jogador->name);
+                    int linha, coluna;
+                    printf("\x1B[31;5;1m%s\x1B[0m, sua vez! : ", jogador->name);
         
-        printf("Digite a linha (1-%d): ", TAMANHO);
-        scanf("%d", &linha);
-        linha--;
+                    printf("Digite a linha (1-%d): ", TAMANHO);
+                    scanf("%d", &linha);
+                    linha--;
         
-        printf("Digite a coluna (1-%d): ", TAMANHO);
-        scanf("%d", &coluna);
-        coluna--;
+                    printf("Digite a coluna (1-%d): ", TAMANHO);
+                    scanf("%d", &coluna);
+                    coluna--;
         
-        if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
-            printf("Posicao invalida. Tente novamente.\n");
-            continue;
-        }
-
-        // Realizar jogada do jogador
-        tabuleiro[linha][coluna] = jogador_atual;
-        }
-        if(jogador_atual=='O'){
-        int linha, coluna;
-        printf("\x1B[34;5;1m%s\x1B[0m, sua vez! : ", jogador[1].name);
-        
-        printf("Digite a linha (1-%d): ", TAMANHO);
-        scanf("%d", &linha);
-        linha--;
-        
-        printf("Digite a coluna (1-%d): ", TAMANHO);
-        scanf("%d", &coluna);
-        coluna--;
-        
-        if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
-            printf("Posicao invalida. Tente novamente.\n");
-            continue;
-        }
-
-        // Realizar jogada do jogador
-        tabuleiro[linha][coluna] = jogador_atual;
-        }
-    }
-    else {
-        // Jogador vs Máquina
-        if (jogador_atual == 'X') {
-            printf("\x1B[32;5;1m%s\x1B[0m, sua vez!: ", jogador->name);
-            int linha, coluna;
-
-            printf("Digite a linha (1-%d): ", TAMANHO);
-            scanf("%d", &linha);
-            linha--;
-
-            printf("Digite a coluna (1-%d): ", TAMANHO);
-            scanf("%d", &coluna);
-            coluna--;
-
-            if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
-                printf("Posicao invalida. Tente novamente.\n");
-                continue;
-            }
-
-            // Realizar jogada do jogador
-            tabuleiro[linha][coluna] = jogador_atual;
-        } else {
-            printf("Vez da maquina jogar...\n");
-
-            // Lógica da jogada da máquina de acordo com a dificuldade
-            if (jogador->dificuldade == 1) {
-                // Jogada aleatória fácil
-                int i,j;
-                //Primeira Jogada
-                do {
-                    i = rand() % TAMANHO;
-                    j = rand() % TAMANHO;
-                } while (tabuleiro[i][j] != ' ');
-                tabuleiro[i][j] = jogador_atual;
-                
-                } else if (jogador->dificuldade == 2) {
-                     // Jogada com lógica de dificuldade 2
-                int block = 0;
-                for (i = 0; i < TAMANHO; i++) {
-                    for (j = 0; j < TAMANHO; j++) {
-                        if (tabuleiro[i][j] == ' ') {
-                            tabuleiro[i][j] = 'X';
-                        if (check_victory(tabuleiro, 'X')) {
-                    // Fazer jogada de bloqueio
-                    tabuleiro[i][j] = 'O';
-                    block = 1;
-                    break;
-                }
-                tabuleiro[i][j] = ' ';
-            }
-        }
-        if (block) {
-            break;
-        }
-    }
-    if (!block) {
-    
-    if (tabuleiro[1][1] == ' ') {
-        tabuleiro[1][1] = 'O';
-    } else {
-        
-        int diagonal[4][2] = {{0, 0}, {0, TAMANHO-1}, {TAMANHO-1, 0}, {TAMANHO-1, TAMANHO-1}};
-        for (int k = 0; k < 4; k++) {
-            int x = diagonal[k][0];
-            int y = diagonal[k][1];
-            if (tabuleiro[x][y] == ' ') {
-                tabuleiro[x][y] = 'O'; 
-                break;
-            }
-        }
-    }
-}
-            } else if (jogador->dificuldade == 3) {
-    int block = 0;
-    int win = 0;
-    int jogadaFeita = 0; // Variável para controlar se a máquina já fez uma jogada nesta rodada
-
-    // Verificar se a máquina pode ganhar
-    if (!jogadaFeita) {
-        for (i = 0; i < TAMANHO; i++) {
-            for (j = 0; j < TAMANHO; j++) {
-                if (tabuleiro[i][j] == ' ') {
-                    tabuleiro[i][j] = 'O';
-                    if (check_victory(tabuleiro, 'O')) {
-                        // Fazer jogada de vitória
-                        win = 1;
-                        jogadaFeita = 1; // Definir como verdadeiro, pois a máquina já fez uma jogada
-                        break;
+                    if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
+                        printf("Posicao invalida. Tente novamente.\n");
+                        continue;
                     }
-                    tabuleiro[i][j] = ' ';
-                }
-            }
-            if (win) {
-                break;
-            }
-        }
-    }
 
-    // Verificar se a máquina precisa bloquear o jogador
-    if (!win && !jogadaFeita) {
-        for (i = 0; i < TAMANHO; i++) {
-            for (j = 0; j < TAMANHO; j++) {
-                if (tabuleiro[i][j] == ' ') {
-                    tabuleiro[i][j] = 'X';
-                    if (check_victory(tabuleiro, 'X')) {
-                        // Fazer jogada de bloqueio
-                        tabuleiro[i][j] = 'O';
-                        block = 1;
-                        jogadaFeita = 1; // Definir como verdadeiro, pois a máquina já fez uma jogada
-                        break;
+                    // Realizar jogada do jogador
+                    tabuleiro[linha][coluna] = jogador_atual;
+                }
+                if(jogador_atual=='O'){
+                    int linha, coluna;
+                    printf("\x1B[34;5;1m%s\x1B[0m, sua vez! : ", jogador[1].name);
+        
+                    printf("Digite a linha (1-%d): ", TAMANHO);
+                    scanf("%d", &linha);
+                    linha--;
+        
+                    printf("Digite a coluna (1-%d): ", TAMANHO);
+                    scanf("%d", &coluna);
+                    coluna--;
+        
+                    if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
+                        printf("Posicao invalida. Tente novamente.\n");
+                        continue;
                     }
-                    tabuleiro[i][j] = ' ';
+
+                    // Realizar jogada do jogador
+                    tabuleiro[linha][coluna] = jogador_atual;
                 }
             }
-            if (block) {
-                break;
-            }
-        }
-    }
-    if (tabuleiro[0][0] == 'O' && tabuleiro[2][2] == 'X' && tabuleiro[2][0] == 'X' && tabuleiro[1][1] == 'X' && tabuleiro[0][2] == 'O' && tabuleiro[2][1] == 'O' && tabuleiro[1][0] == ' ' && tabuleiro[1][2] == ' ') {
-        if (tabuleiro[1][0] == ' '){
-        tabuleiro[1][0] = 'O';
-        jogadaFeita = 1;
-        
-        }}
-    if (tabuleiro[0][0] == 'X' && tabuleiro[2][2] == 'O' && tabuleiro[2][0] == 'X' && tabuleiro[1][1] == 'O' && tabuleiro[0][2] == ' ' && tabuleiro[2][1] == 'X' && tabuleiro[1][0] == 'O' && tabuleiro[1][2] == 'X') {
-        if (tabuleiro[0][1] == ' '){
-        tabuleiro[0][1] = 'O';
-        jogadaFeita = 1;
-        }
-    }
-    if (tabuleiro[0][0] == 'O' && tabuleiro[2][2] == 'X' && tabuleiro[2][0] == 'O' && tabuleiro[1][1] == 'X' && tabuleiro[0][2] == 'X' && tabuleiro[2][1] == ' ' && tabuleiro[1][0] == 'X' && tabuleiro[1][2] == 'O') {
-        if (tabuleiro[2][1] == ' '){
-        tabuleiro[2][1] = 'O';
-        jogadaFeita = 1;
-        }
-    }
-    
-    if (tabuleiro[0][0] == 'X' && tabuleiro[1][1] == 'O' && tabuleiro[2][1] == 'X' ) {
-        if (tabuleiro[2][0] == ' '){
-        tabuleiro[2][0] = 'O';
-        jogadaFeita = 1;
-        }
-    }
-    // Bloquear usuário quando ele pega duas diagonais
-    
-    if (!block && !win && !jogadaFeita) {
-        if (tabuleiro[1][2] == 'X' && tabuleiro[2][0] == 'X' && tabuleiro[0][1] == 'X') {
-            if (tabuleiro[2][2] == ' ') {
-                tabuleiro[2][2] = 'O';
-                jogadaFeita = 1;
-            }
-        } else if (tabuleiro[1][2] == 'X' && tabuleiro[2][0] == 'X') {
-            jogadaFeita = 1;
-            if (tabuleiro[2][2] == ' ') {
-                tabuleiro[2][2] = 'O';
-            }
-        } else {
-            // Verificar se o usuário pegou duas diagonais
-            if (tabuleiro[0][0] == 'X' && tabuleiro[2][2] == 'X') {
-                if (tabuleiro[0][1] == ' ') {
-                    tabuleiro[0][1] = 'O';
-                    jogadaFeita = 1;
+            else {
+                // Jogador vs Máquina
+                if (jogador_atual == 'X') {
+                    printf("\x1B[32;5;1m%s\x1B[0m, sua vez!: ", jogador->name);
+                    int linha, coluna;
+
+                    printf("Digite a linha (1-%d): ", TAMANHO);
+                    scanf("%d", &linha);
+                    linha--;
+
+                    printf("Digite a coluna (1-%d): ", TAMANHO);
+                    scanf("%d", &coluna);
+                    coluna--;
+
+                    if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO || tabuleiro[linha][coluna] != ' ') {
+                        printf("Posicao invalida. Tente novamente.\n");
+                        continue;
+                    }
+
+                    // Realizar jogada do jogador
+                    tabuleiro[linha][coluna] = jogador_atual;
                 } else {
-                    tabuleiro[1][2] = 'O';
-                    jogadaFeita = 1;
-                }
-            } else if (tabuleiro[0][2] == 'X' && tabuleiro[2][0] == 'X') {
-                if (tabuleiro[1][1] == ' ') {
-                    tabuleiro[1][1] = 'O';
-                    jogadaFeita = 1;
-                } else {
-                    tabuleiro[0][1] = 'O';
-                    jogadaFeita = 1;
-                }
-            } else {
-                // Fazer jogada padrão
-                if (tabuleiro[1][1] == ' ') {
-                    tabuleiro[1][1] = 'O';
-                    jogadaFeita = 1;
-                } else {
-                    int diagonal[8][2] = {{0, 0}, {0, 2}, {2, 0}, {2, 2}, {0, 1}, {1, 2}, {2, 1}, {1, 0}};
-                    if (tabuleiro[0][0] == 'X' && tabuleiro[0][1] == ' ' && tabuleiro[1][0] == ' ')
-                {
-                    if (tabuleiro[1][2] == 'X' && tabuleiro[2][1] == 'X')
-                    {
-                        if (tabuleiro[2][0] == ' ')
-                    {
-                        tabuleiro[2][0] = 'O';
-                        jogadaFeita = 1;
-                    }
-                    }
-                }
-                if (tabuleiro[2][1] == 'X' && tabuleiro[1][2] == 'X')
-                {
-                    if (tabuleiro[2][2] == ' ') {
-                        tabuleiro[2][2] = 'O';
-                        jogadaFeita = 1;
-                }
-                }
-                else
-                {
-                    for (int k = 0; k < 4; k++) {
-                        int x = diagonal[k][0];
-                        int y = diagonal[k][1];
-                        if (tabuleiro[x][y] == ' ') {
-                            tabuleiro[x][y] = 'O';
-                            jogadaFeita = 1;
-                            break;
+                    printf("Vez da maquina jogar...\n");
+                    // Lógica da jogada da máquina de acordo com a dificuldade
+                    if (jogador->dificuldade == 1) {
+                        // Jogada aleatória fácil
+                        int i,j;
+                        //Primeira Jogada
+                        do {
+                            i = rand() % TAMANHO;
+                            j = rand() % TAMANHO;
+                        } while (tabuleiro[i][j] != ' ');
+                        tabuleiro[i][j] = jogador_atual;
+               
+                    } 
+                    else if (jogador->dificuldade == 2) {
+                            // Jogada com lógica de dificuldade 2
+                            int block = 0;
+                            for (i = 0; i < TAMANHO; i++) {
+                                for (j = 0; j < TAMANHO; j++) {
+                                    if (tabuleiro[i][j] == ' ') {
+                                        tabuleiro[i][j] = 'X';
+                                        if (check_victory(tabuleiro, 'X')) {
+                                            // Fazer jogada de bloqueio
+                                            tabuleiro[i][j] = 'O';
+                                            block = 1;
+                                            break;
+                                        }
+                                        tabuleiro[i][j] = ' ';
+                                    }
+                                }
+                                if (block) {
+                                    break;
+                                }
+                            }
+                            if (!block) {
+    
+                                if (tabuleiro[1][1] == ' ') {
+                                    tabuleiro[1][1] = 'O';
+                                } else {
+        
+                                    int diagonal[4][2] = {{0, 0}, {0, TAMANHO-1}, {TAMANHO-1, 0}, {TAMANHO-1, TAMANHO-1}};
+                                    for (int k = 0; k < 4; k++) {
+                                        int x = diagonal[k][0];
+                                        int y = diagonal[k][1];
+                                        if (tabuleiro[x][y] == ' ') {
+                                            tabuleiro[x][y] = 'O'; 
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                    } else if (jogador->dificuldade == 3) {
+                        int block = 0;
+                        int win = 0;
+                        int jogadaFeita = 0; // Variável para controlar se a máquina já fez uma jogada nesta rodada
+
+                        // Verificar se a máquina pode ganhar
+                        if (!jogadaFeita) {
+                            for (i = 0; i < TAMANHO; i++) {
+                                for (j = 0; j < TAMANHO; j++) {
+                                    if (tabuleiro[i][j] == ' ') {
+                                        tabuleiro[i][j] = 'O';
+                                        if (check_victory(tabuleiro, 'O')) {
+                                            // Fazer jogada de vitória
+                                            win = 1;
+                                            jogadaFeita = 1; // Definir como verdadeiro, pois a máquina já fez uma jogada
+                                            break;
+                                        }
+                                        tabuleiro[i][j] = ' ';
+                                    }
+                                }
+                                if (win) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Verificar se a máquina precisa bloquear o jogador
+                        if (!win && !jogadaFeita) {
+                            for (i = 0; i < TAMANHO; i++) {
+                                for (j = 0; j < TAMANHO; j++) {
+                                    if (tabuleiro[i][j] == ' ') {
+                                        tabuleiro[i][j] = 'X';
+                                        if (check_victory(tabuleiro, 'X')) {
+                                            // Fazer jogada de bloqueio
+                                            tabuleiro[i][j] = 'O';
+                                            block = 1;
+                                            jogadaFeita = 1; // Definir como verdadeiro, pois a máquina já fez uma jogada
+                                            break;
+                                        }
+                                        tabuleiro[i][j] = ' ';
+                                    }
+                                }
+                                if (block) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (tabuleiro[0][0] == 'O' && tabuleiro[2][2] == 'X' && tabuleiro[2][0] == 'X' && tabuleiro[1][1] == 'X' && tabuleiro[0][2] == 'O' && tabuleiro[2][1] == 'O' && tabuleiro[1][0] == ' ' && tabuleiro[1][2] == ' ') {
+                            if (tabuleiro[1][0] == ' '){
+                                tabuleiro[1][0] = 'O';
+                                jogadaFeita = 1;
+                            }
+                        }
+                        if (tabuleiro[0][0] == 'X' && tabuleiro[2][2] == 'O' && tabuleiro[2][0] == 'X' && tabuleiro[1][1] == 'O' && tabuleiro[0][2] == ' ' && tabuleiro[2][1] == 'X' && tabuleiro[1][0] == 'O' && tabuleiro[1][2] == 'X') {
+                            if (tabuleiro[0][1] == ' '){
+                                tabuleiro[0][1] = 'O';
+                                jogadaFeita = 1;
+                            }
+                        }
+                        if (tabuleiro[0][0] == 'O' && tabuleiro[2][2] == 'X' && tabuleiro[2][0] == 'O' && tabuleiro[1][1] == 'X' && tabuleiro[0][2] == 'X' && tabuleiro[2][1] == ' ' && tabuleiro[1][0] == 'X' && tabuleiro[1][2] == 'O') {
+                            if (tabuleiro[2][1] == ' '){
+                                tabuleiro[2][1] = 'O';
+                                jogadaFeita = 1;
+                            }
+                        }
+                        if (tabuleiro[0][0] == 'X' && tabuleiro[1][1] == 'O' && tabuleiro[2][1] == 'X' ) {
+                            if (tabuleiro[2][0] == ' '){
+                                tabuleiro[2][0] = 'O';
+                                jogadaFeita = 1;
+                            }
+                        }
+                        // Bloquear usuário quando ele pega duas diagonais
+                        if (!block && !win && !jogadaFeita) {
+                            if (tabuleiro[1][2] == 'X' && tabuleiro[2][0] == 'X' && tabuleiro[0][1] == 'X') {
+                                if (tabuleiro[2][2] == ' ') {
+                                    tabuleiro[2][2] = 'O';
+                                    jogadaFeita = 1;
+                                }
+                            } else if (tabuleiro[1][2] == 'X' && tabuleiro[2][0] == 'X') {
+                                jogadaFeita = 1;
+                                if (tabuleiro[2][2] == ' ') {
+                                    tabuleiro[2][2] = 'O';
+                                }
+                            } else {
+                                // Verificar se o usuário pegou duas diagonais
+                                if (tabuleiro[0][0] == 'X' && tabuleiro[2][2] == 'X'){
+                                    if (tabuleiro[0][1] == ' ') {
+                                        tabuleiro[0][1] = 'O';
+                                        jogadaFeita = 1;
+                                    } else {
+                                        tabuleiro[1][2] = 'O';
+                                        jogadaFeita = 1;
+                                    }
+                                } else if (tabuleiro[0][2] == 'X' && tabuleiro[2][0] == 'X') {
+                                    if (tabuleiro[1][1] == ' ') {
+                                        tabuleiro[1][1] = 'O';
+                                        jogadaFeita = 1;
+                                    } else {
+                                        tabuleiro[0][1] = 'O';
+                                        jogadaFeita = 1;
+                                    }
+                                } else {
+                                    // Fazer jogada padrão
+                                    if (tabuleiro[1][1] == ' ') {
+                                        tabuleiro[1][1] = 'O';
+                                        jogadaFeita = 1;
+                                    } else {
+                                        int diagonal[8][2] = {{0, 0}, {0, 2}, {2, 0}, {2, 2}, {0, 1}, {1, 2}, {2, 1}, {1, 0}};
+                                        if (tabuleiro[0][0] == 'X' && tabuleiro[0][1] == ' ' && tabuleiro[1][0] == ' ')
+                                        {
+                                            if (tabuleiro[1][2] == 'X' && tabuleiro[2][1] == 'X')
+                                            {
+                                                if (tabuleiro[2][0] == ' ')
+                                                {
+                                                    tabuleiro[2][0] = 'O';
+                                                    jogadaFeita = 1;
+                                                }
+                                            }
+                                        }
+                                        if (tabuleiro[2][1] == 'X' && tabuleiro[1][2] == 'X')
+                                        {
+                                            if (tabuleiro[2][2] == ' ') {
+                                                    tabuleiro[2][2] = 'O';
+                                                    jogadaFeita = 1;
+                                                }
+                                        }
+                                        else
+                                        {
+                                            for (int k = 0; k < 4; k++) {
+                                                int x = diagonal[k][0];
+                                                int y = diagonal[k][1];
+                                                if (tabuleiro[x][y] == ' ') {
+                                                    tabuleiro[x][y] = 'O';
+                                                    jogadaFeita = 1;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }   
+                            }
                         }
                     }
                 }
             }
-        }
-    }
-}
-    }
-        }
-    }
-        // Verificar vitória (Fazer uma para Jogador vs Jogador)
-        if (check_victory(tabuleiro, jogador_atual)) {
-    int linha_vencedora_atual = 1;
-    int coluna_vencedora_atual = 1;
-    int diagonal_principal_vencedora_atual = 1;
-    int diagonal_secundaria_vencedora_atual = 1;
-
-    vitoria = 1;
-    if (jogador_atual == 'X') {
-        printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
-        
-        jogador->wins++;
-        printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
-        for (i = 0; i < TAMANHO; i++) {
-            printf( "\t\t\t\t\t\t     %d  " , i + 1);
-            for (j = 0; j < TAMANHO; j++) {
-                if (tabuleiro[i][j] == 'X') {
-                    if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
-                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
-                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
-                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
-                        printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else {
-                        printf(vermelho"%c"normal, tabuleiro[i][j]);
+            // Jogador vs Maquina
+            if (check_victory(tabuleiro, jogador_atual)) {
+                int linha_vencedora_atual = 1;
+                int coluna_vencedora_atual = 1;
+                int diagonal_principal_vencedora_atual = 1;
+                int diagonal_secundaria_vencedora_atual = 1;
+                vitoria = 1;
+                if (jogador_atual == 'X') {
+                    printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
+                    jogador->wins++;
+                    printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
+                    for (i = 0; i < TAMANHO; i++) {
+                        printf( "\t\t\t\t\t\t     %d  " , i + 1);
+                        for (j = 0; j < TAMANHO; j++) {
+                            if (tabuleiro[i][j] == 'X') {
+                                if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[0][0]);
+                                } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else {
+                                    printf(vermelho"%c"normal, tabuleiro[i][j]);
+                                }
+                            } 
+                            else if (tabuleiro[i][j] == 'O') {
+                                printf(azul"%c"normal, tabuleiro[i][j]);
+                            } else {
+                                printf("%c", tabuleiro[i][j]);
+                            }
+                            if (j < TAMANHO - 1) {
+                                printf(" | ");
+                            }
+                        }
+                        printf("\n");
+                        if (i < TAMANHO - 1) {
+                            printf("\t\t\t\t\t\t       ---+---+---\n");
+                        }
                     }
-                } else if (tabuleiro[i][j] == 'O') {
-                    printf(azul"%c"normal, tabuleiro[i][j]);
+                    printf("Parabens %s, voce venceu!\n", jogador->name);
+                    printf("\n");
                 } else {
-                    printf("%c", tabuleiro[i][j]);
+                    printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
+                    jogador->losses++;
+                    printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
+                    for (i = 0; i < TAMANHO; i++) {
+                        printf( "\t\t\t\t\t\t     %d  " , i + 1);
+                        for (j = 0; j < TAMANHO; j++) {
+                            if (tabuleiro[i][j] == 'X') {
+                                printf(vermelho"%c"normal, tabuleiro[i][j]);
+                            } 
+                            else if (tabuleiro[i][j] == 'O') {
+                                if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else {
+                                    printf(azul"%c"normal, tabuleiro[i][j]);
+                                }
+                            } 
+                            else {
+                                printf("%c", tabuleiro[i][j]);
+                            }
+                            if (j < TAMANHO - 1) {
+                                printf(" | ");
+                            }
+                        }
+                        printf("\n");
+                        if (i < TAMANHO - 1) {
+                            printf("\t\t\t\t\t\t       ---+---+---\n");
+                        }
+                    }
+                    printf("Voce perdeu %s, a maquina venceu!\n", jogador->name);
+                    printf("\n");
                 }
-                if (j < TAMANHO - 1) {
-                    printf(" | ");
+            }
+            //Jogador vs Jogador
+            if (check_victory(tabuleiro, jogador_atual)) {
+                int linha_vencedora_atual = 1;
+                int coluna_vencedora_atual = 1;
+                int diagonal_principal_vencedora_atual = 1;
+                int diagonal_secundaria_vencedora_atual = 1;
+                vitoria = 1;
+                if (jogador_atual == 'X') {
+                    printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
+                    jogador[1].losses++;
+                    printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
+                    for (i = 0; i < TAMANHO; i++) {
+                        printf( "\t\t\t\t\t\t     %d  " , i + 1);
+                        for (j = 0; j < TAMANHO; j++) {
+                            if (tabuleiro[i][j] == 'X') {
+                                if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
+                                    printf(vermelho"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else {
+                                    printf(vermelho"%c"normal, tabuleiro[i][j]);
+                                }
+                            } else if (tabuleiro[i][j] == 'O') {
+                                printf(azul"%c"normal, tabuleiro[i][j]);
+                            } else {
+                                printf("%c", tabuleiro[i][j]);
+                            }
+                            if (j < TAMANHO - 1) {
+                                printf(" | ");
+                            }
+                        }
+                        printf("\n");
+                        if (i < TAMANHO - 1) {
+                            printf("\t\t\t\t\t\t       ---+---+---\n");
+                        }
+                    }
+                    printf("Parabens %s, voce venceu!\n", jogador->name);
+                    printf("\n");
+                } else {
+                    printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");       
+                    jogador[1].wins++;
+                    printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
+                    for (i = 0; i < TAMANHO; i++) {
+                        printf( "\t\t\t\t\t\t     %d  " , i + 1);
+                        for (j = 0; j < TAMANHO; j++) {
+                            if (tabuleiro[i][j] == 'X') {
+                                printf(vermelho"%c"normal, tabuleiro[i][j]);
+                            } else if (tabuleiro[i][j] == 'O') {
+                                if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
+                                    printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
+                                } else {
+                                    printf(azul"%c"normal, tabuleiro[i][j]);
+                                }
+                            } else {
+                                printf("%c", tabuleiro[i][j]);
+                            }
+                            if (j < TAMANHO - 1) {
+                                printf(" | ");
+                            }
+                        }
+                        printf("\n");
+                        if (i < TAMANHO - 1) {
+                            printf("\t\t\t\t\t\t       ---+---+---\n");
+                        }
+                    }
+                    printf("Parabens %s, voce venceu!\n", jogador[1].name);
+                    printf("\n");
+                }
+            }
+            // Alternar jogador
+            jogador_atual = (jogador_atual == 'X') ? 'O' : 'X';
+            jogadas++;        
+        }
+        // Verificar empate
+        if (!vitoria) {
+            clear_screen();
+            printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
+            // Exibir tabuleiro
+            printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
+            for (i = 0; i < TAMANHO; i++) {
+                printf( "\t\t\t\t\t\t     %d  " , i + 1);
+                for (j = 0; j < TAMANHO; j++) {
+                    if (tabuleiro[i][j] == 'X') {
+                        printf("%s%c%s", vermelho, tabuleiro[i][j], normal);
+                    } else if (tabuleiro[i][j] == 'O') {
+                        printf("%s%c%s", azul, tabuleiro[i][j], normal);
+                    } else {
+                        printf("%c", tabuleiro[i][j]);
+                    }
+                    if (j < TAMANHO - 1) {
+                        printf(" | ");
+                    }
+                }
+                printf("\n");
+                if (i < TAMANHO - 1) {
+                    printf("\t\t\t\t\t\t       ---+---+---\n");
                 }
             }
             printf("\n");
-            if (i < TAMANHO - 1) {
-                printf("\t\t\t\t\t\t       ---+---+---\n");
-            }
+            printf("Empate! O jogo terminou sem vencedores.\n");
+            MessageBeep(MB_ICONERROR);
         }
-        printf("Parabens %s, voce venceu!\n", jogador->name);
-        printf("\n");
-    } else {
-        printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
-        
-        jogador->losses++;
-
-        printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
-        for (i = 0; i < TAMANHO; i++) {
-            printf( "\t\t\t\t\t\t     %d  " , i + 1);
-            for (j = 0; j < TAMANHO; j++) {
-                if (tabuleiro[i][j] == 'X') {
-                    printf(vermelho"%c"normal, tabuleiro[i][j]);
-                } else if (tabuleiro[i][j] == 'O') {
-                    if (linha_vencedora_atual && (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual)) {
-                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else if (coluna_vencedora_atual && (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual)) {
-                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else if (diagonal_principal_vencedora_atual && (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual)) {
-                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else if (diagonal_secundaria_vencedora_atual && (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual)) {
-                        printf(azul"\x1B[1;5m%c\x1B[0m"normal, tabuleiro[i][j]);
-                    } else {
-                        printf(azul"%c"normal, tabuleiro[i][j]);
-                    }
-                } else {
-                    printf("%c", tabuleiro[i][j]);
-                }
-                if (j < TAMANHO - 1) {
-                    printf(" | ");
-                }
-            }
-            printf("\n");
-            if (i < TAMANHO - 1) {
-                printf("\t\t\t\t\t\t       ---+---+---\n");
-            }
+        // Perguntar se quer jogar novamente
+        char opcao;
+        printf("\nDeseja jogar novamente? (S/N): ");
+        scanf(" %c", &opcao);
+        if (opcao == 'S' || opcao == 's') {
+            jogar(jogador, Ojogador);
         }
-        printf("Voce perdeu %s, a maquina venceu!\n", jogador->name);
-
-        printf("\n");
-    }
-}
-        // Alternar jogador
-        jogador_atual = (jogador_atual == 'X') ? 'O' : 'X';
-        jogadas++;
-        
     }
 
-    // Verificar empate
-    if (!vitoria) {
+    void exibirSobre() {
         clear_screen();
-        printf("\x1B[35;1m====================================================\x1B[0m  \x1B[1mJOGO DA VELHA\x1B[0m \x1B[35;1m====================================================\x1B[0m\n\n");
+        printf("\x1B[35m========================================================\x1B[0m SOBRE \x1B[35m=========================================================\x1B[0m\n\n");
+        printf("O Jogo da Velha e um jogo popular que envolve ");
+        printf("dois jogadores, X e O, que se revezam marcando espacos em ");
+        printf("uma grade de 3x3\n\nO jogador que conseguir colocar tres ");
+        printf("marcas na horizontal, vertical ou diagonal vence o jogo ");
+        printf("\n\nPressione qualquer tecla para continuar...");
+        getchar();
+        getchar();
+    }
 
-        // Exibir tabuleiro
-        printf("\n\n\t\t\t\t\t\t        1   2   3\n" );
-for (i = 0; i < TAMANHO; i++) {
-    printf( "\t\t\t\t\t\t     %d  " , i + 1);
-    for (j = 0; j < TAMANHO; j++) {
-        if (tabuleiro[i][j] == 'X') {
-            printf("%s%c%s", vermelho, tabuleiro[i][j], normal);
-            MessageBeep(MB_ICONERROR);
-        } else if (tabuleiro[i][j] == 'O') {
-            printf("%s%c%s", azul, tabuleiro[i][j], normal);
-            MessageBeep(MB_ICONERROR);
-        } else {
-            printf("%c", tabuleiro[i][j]);
+    void clear_screen() {
+        system("cls");
+    }
+
+    int compare_players(const void *a, const void *b) {
+        const Player *player1 = (const Player *)a;
+        const Player *player2 = (const Player *)b;
+        // Comparar o número de vitórias (ordem decrescente)
+        if (player1->wins > player2->wins) {
+            return -1;
+        } else if (player1->wins < player2->wins) {
+            return 1;
         }
-                if (j < TAMANHO - 1) {
-                    printf(" | ");
+        // Se houver empate, comparar o número de derrotas (ordem crescente)
+        if (player1->losses < player2->losses) {
+            return -1;
+        } else if (player1->losses > player2->losses) {
+            return 1;
+        }
+        // Se houver empate novamente, comparar os nomes em ordem alfabética
+        return strcmp(player1->name, player2->name);
+    }
+    int verificar_jogador(Player *players, int num_players, const char *name) {
+        for (int i = 0; i < num_players; i++) {
+            if (strcmp(players[i].name, name) == 0) {
+                return i;
+            }
+        }
+        return -1;  // Jogador não encontrado
+    }
+
+    void display_ranking(Player *jogador, int Ojogador) {
+        if (Ojogador == 0) {
+            printf("O ranking está vazio.\n");
+            return;
+        }
+        // Ordenar o vetor de jogadores
+        system("cls");
+        qsort(jogador, Ojogador, sizeof(Player), compare_players);
+        printf("\x1B[35;1m=======================================================\x1B[0m \x1B[1mRANKING\x1B[0m \x1B[35m =======================================================\x1B[0m\n\n");
+        printf("\x1B[32mNICKNAME\t\t\tVITORIAS\t\t\t\tDERROTAS\x1B[0m\n");
+        printf("--------\t\t\t--------\t\t\t\t--------\n");
+        Player unico_jogador[Ojogador];
+        int num_unico_jogador = 0;
+        for (int i = 0; i < Ojogador; i++) {
+            // Verificar se o jogador já existe no vetor de jogadores únicos
+            int soma_jogador = verificar_jogador(unico_jogador, num_unico_jogador, jogador[i].name);
+            if (soma_jogador == -1) {
+                // Jogador não existe no vetor, adicioná-lo
+                strcpy(unico_jogador[num_unico_jogador].name, jogador[i].name);
+                unico_jogador[num_unico_jogador].wins = jogador[i].wins;
+                unico_jogador[num_unico_jogador].losses = jogador[i].losses;
+                num_unico_jogador++;
+            } else {
+                // Jogador já existe no vetor, somar as vitórias e derrotas
+                unico_jogador[soma_jogador].wins += jogador[i].wins;
+                unico_jogador[soma_jogador].losses += jogador[i].losses;
+            }
+        }
+        // Exibir jogadores únicos no ranking
+        for (int i = 0; i < num_unico_jogador; i++) {
+            // Ajustar o espaçamento do nome para 15 caracteres
+            char nome_formatado[16];
+            snprintf(nome_formatado, sizeof(nome_formatado), "%-15s", unico_jogador[i].name);
+            // Verificar se o nome tem 7 ou menos caracteres
+            if (strlen(nome_formatado) <= 7) {
+                // Adicionar caracteres vazios para ter 8 ou mais caracteres
+                for (int j = strlen(nome_formatado); j < 8; j++) {
+                    nome_formatado[j] = ' ';
                 }
+                nome_formatado[8] = '\0';  // Adicionar o terminador de string
             }
-            printf("\n");
-            if (i < TAMANHO - 1) {
-                printf("\t\t\t\t\t\t       ---+---+---\n");
-            }
-        }
-        printf("\n");
-
-        printf("Empate! O jogo terminou sem vencedores.\n");
-        MessageBeep(MB_ICONERROR);
-    }
-
-    // Perguntar se quer jogar novamente
-    char opcao;
-    printf("\nDeseja jogar novamente? (S/N): ");
-    scanf(" %c", &opcao);
-
-    if (opcao == 'S' || opcao == 's') {
-        jogar(jogador, Ojogador);
-    }
-}
-
-void exibirSobre() {
-    clear_screen();
-    printf("\x1B[35m========================================================\x1B[0m SOBRE \x1B[35m=========================================================\x1B[0m\n\n");
-    printf("O Jogo da Velha e um jogo popular que envolve ");
-    printf("dois jogadores, X e O, que se revezam marcando espacos em ");
-    printf("uma grade de 3x3\n\nO jogador que conseguir colocar tres ");
-    printf("marcas na horizontal, vertical ou diagonal vence o jogo ");
-    printf("\n\nPressione qualquer tecla para continuar...");
-    getchar();
-    getchar();
-}
-
-void clear_screen() {
-    system("cls");
-}
-
-int compare_players(const void *a, const void *b) {
-    const Player *player1 = (const Player *)a;
-    const Player *player2 = (const Player *)b;
-
-    // Comparar o número de vitórias (ordem decrescente)
-    if (player1->wins > player2->wins) {
-        return -1;
-    } else if (player1->wins < player2->wins) {
-        return 1;
-    }
-
-    // Se houver empate, comparar o número de derrotas (ordem crescente)
-    if (player1->losses < player2->losses) {
-        return -1;
-    } else if (player1->losses > player2->losses) {
-        return 1;
-    }
-
-    // Se houver empate novamente, comparar os nomes em ordem alfabética
-    return strcmp(player1->name, player2->name);
-}
-int verificar_jogador(Player *players, int num_players, const char *name) {
-    for (int i = 0; i < num_players; i++) {
-        if (strcmp(players[i].name, name) == 0) {
-            return i;
+            // Trocar o inteiro para float
+            printf("%s\t\t\t   %d\t\t\t\t\t   %d\n", nome_formatado, unico_jogador[i].wins, unico_jogador[i].losses);
         }
     }
-    return -1;  // Jogador não encontrado
-}
 
-void display_ranking(Player *jogador, int Ojogador) {
-    if (Ojogador == 0) {
-        printf("O ranking está vazio.\n");
-        return;
+
+    void load_ranking(Player *jogador, int *Ojogador) {
+        FILE *file = fopen(ARQUIVO, "r+");
+        if (file != NULL) {
+            while (!feof(file)) {
+                if (fscanf(file, "%s %d %d", jogador[*Ojogador].name, &(jogador[*Ojogador].wins),
+                    &(jogador[*Ojogador].losses)) != 3) {
+                    break;
+                }
+                (*Ojogador)++;
+            }
+            fclose(file);
+        }
     }
 
-    // Ordenar o vetor de jogadores
-    system("cls");
-    qsort(jogador, Ojogador, sizeof(Player), compare_players);
-
-    printf("\x1B[35;1m=======================================================\x1B[0m \x1B[1mRANKING\x1B[0m \x1B[35m =======================================================\x1B[0m\n\n");
-    printf("\x1B[32mNICKNAME\t\t\tVITORIAS\t\t\t\tDERROTAS\x1B[0m\n");
-    printf("--------\t\t\t--------\t\t\t\t--------\n");
-
-    Player unico_jogador[Ojogador];
-    int num_unico_jogador = 0;
-
-    for (int i = 0; i < Ojogador; i++) {
-        // Verificar se o jogador já existe no vetor de jogadores únicos
-        int soma_jogador = verificar_jogador(unico_jogador, num_unico_jogador, jogador[i].name);
-        if (soma_jogador == -1) {
-            // Jogador não existe no vetor, adicioná-lo
-            strcpy(unico_jogador[num_unico_jogador].name, jogador[i].name);
-            unico_jogador[num_unico_jogador].wins = jogador[i].wins;
-            unico_jogador[num_unico_jogador].losses = jogador[i].losses;
-            num_unico_jogador++;
+    void save_ranking(Player *jogador, int Ojogador) {
+        FILE *file = fopen(ARQUIVO, "w");
+        if (file != NULL) {
+            for (int i = 0; i < Ojogador; i++) {
+                fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
+            }
+            fclose(file);
+            printf("Ranking salvo com sucesso!\n");
         } else {
-            // Jogador já existe no vetor, somar as vitórias e derrotas
-            unico_jogador[soma_jogador].wins += jogador[i].wins;
-            unico_jogador[soma_jogador].losses += jogador[i].losses;
-        }
+            printf("Nao foi possível salvar o ranking.\n");
+        }  
     }
 
-    // Exibir jogadores únicos no ranking
-    for (int i = 0; i < num_unico_jogador; i++) {
-        // Ajustar o espaçamento do nome para 15 caracteres
-        char nome_formatado[16];
-        snprintf(nome_formatado, sizeof(nome_formatado), "%-15s", unico_jogador[i].name);
-
-        // Verificar se o nome tem 7 ou menos caracteres
-        if (strlen(nome_formatado) <= 7) {
-            // Adicionar caracteres vazios para ter 8 ou mais caracteres
-            for (int j = strlen(nome_formatado); j < 8; j++) {
-                nome_formatado[j] = ' ';
-            }
-            nome_formatado[8] = '\0';  // Adicionar o terminador de string
-        }
-
-        // Trocar o inteiro para float
-        printf("%s\t\t\t   %d\t\t\t\t\t   %d\n", nome_formatado, unico_jogador[i].wins, unico_jogador[i].losses);
+    void Adificuldade(Player *player) {
+        system("cls");
+        printf("\n\t\t\t\t\t\t\x1B[1;32;5mEscolha a dificuldade que deseja!\x1B[0m\n\n");
+        printf("\n\t\t\t\t\t\t\x1B[32;1m1\x1B[0m - Facil ");
+        printf("\x1B[32;1m2\x1B[0m - Medio ");
+        printf("\x1B[32;1m3\x1B[0m - Dificil \n");
+        printf("\n\nDigite a opcao desejada: ");
+        scanf("%d", &(player->dificuldade));
     }
-}
 
-
-void load_ranking(Player *jogador, int *Ojogador) {
-    FILE *file = fopen(ARQUIVO, "r+");
-    if (file != NULL) {
-        while (!feof(file)) {
-            if (fscanf(file, "%s %d %d", jogador[*Ojogador].name, &(jogador[*Ojogador].wins),
-                       &(jogador[*Ojogador].losses)) != 3) {
+    int check_victory(char tabuleiro[TAMANHO][TAMANHO], char jogador_atual) {
+        int i, j;
+        int linha_vencedora_atual = 0;
+        int coluna_vencedora_atual = 0;
+        int diagonal_principal_vencedora_atual = 0;
+        int diagonal_secundaria_vencedora_atual = 0;
+        // Verificar linhas
+        for (i = 0; i < TAMANHO; i++) {
+            if (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual) {
+                linha_vencedora_atual = 1;
                 break;
             }
-            (*Ojogador)++;
         }
-        fclose(file);
-    }
-}
-
-void save_ranking(Player *jogador, int Ojogador) {
-    FILE *file = fopen(ARQUIVO, "w");
-    if (file != NULL) {
-        for (int i = 0; i < Ojogador; i++) {
-            fprintf(file, "%s %d %d\n", jogador[i].name, jogador[i].wins, jogador[i].losses);
+        // Verificar colunas
+        for (j = 0; j < TAMANHO; j++) {
+            if (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual) {
+                coluna_vencedora_atual = 1;
+                break;
+            }
         }
-        fclose(file);
-        printf("Ranking salvo com sucesso!\n");
-    } else {
-        printf("Nao foi possível salvar o ranking.\n");
-    }
-}
-
-
-void Adificuldade(Player *player) {
-    system("cls");
-    printf("\n\t\t\t\t\t\t\x1B[1;32;5mEscolha a dificuldade que deseja!\x1B[0m\n\n");
-    printf("\n\t\t\t\t\t\t\x1B[32;1m1\x1B[0m - Facil ");
-    printf("\x1B[32;1m2\x1B[0m - Medio ");
-    printf("\x1B[32;1m3\x1B[0m - Dificil \n");
-    printf("\n\nDigite a opcao desejada: ");
-    scanf("%d", &(player->dificuldade));
-}
-
-int check_victory(char tabuleiro[TAMANHO][TAMANHO], char jogador_atual) {
-    int i, j;
-    int linha_vencedora_atual = 0;
-    int coluna_vencedora_atual = 0;
-    int diagonal_principal_vencedora_atual = 0;
-    int diagonal_secundaria_vencedora_atual = 0;
-
-    // Verificar linhas
-    for (i = 0; i < TAMANHO; i++) {
-        if (tabuleiro[i][0] == jogador_atual && tabuleiro[i][1] == jogador_atual && tabuleiro[i][2] == jogador_atual) {
-            linha_vencedora_atual = 1;
-            break;
+        // Verificar diagonal principal
+        if (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual) {
+            diagonal_principal_vencedora_atual = 1;
         }
-    }
-
-    // Verificar colunas
-    for (j = 0; j < TAMANHO; j++) {
-        if (tabuleiro[0][j] == jogador_atual && tabuleiro[1][j] == jogador_atual && tabuleiro[2][j] == jogador_atual) {
-            coluna_vencedora_atual = 1;
-            break;
+        // Verificar diagonal secundária
+        if (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual) {
+            diagonal_secundaria_vencedora_atual = 1;
         }
+        // Exibir mensagem de vitória e retornar 1 se houver vitória
+        if (linha_vencedora_atual || coluna_vencedora_atual || diagonal_principal_vencedora_atual || diagonal_secundaria_vencedora_atual) {
+            system("cls");
+            return 1;
+        }
+        return 0;
     }
-
-    // Verificar diagonal principal
-    if (tabuleiro[0][0] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][2] == jogador_atual) {
-        diagonal_principal_vencedora_atual = 1;
-    }
-
-    // Verificar diagonal secundária
-    if (tabuleiro[0][2] == jogador_atual && tabuleiro[1][1] == jogador_atual && tabuleiro[2][0] == jogador_atual) {
-        diagonal_secundaria_vencedora_atual = 1;
-    }
-
-    // Exibir mensagem de vitória e retornar 1 se houver vitória
-    if (linha_vencedora_atual || coluna_vencedora_atual || diagonal_principal_vencedora_atual || diagonal_secundaria_vencedora_atual) {
-        system("cls");
-        return 1;
-    }
-
-    return 0;
-}
