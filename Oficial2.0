@@ -682,10 +682,12 @@ int main() {
         printf("dois jogadores, X e O, que se revezam marcando espacos em ");
         printf("uma grade de 3x3\n\nO jogador que conseguir colocar tres ");
         printf("marcas na horizontal, vertical ou diagonal vence o jogo ");
-        printf("Escrever descrição dos otarios que perderam tempo fazendo uma tentantiva de ser programador ");  
-        printf("\n\nPressione qualquer tecla para continuar...");
-        getchar();
-        getchar();
+        printf("\nVersao 0.1 alpha deluxe Edition, Desenvolvido pelo Quarteto Sinistro : Lucas, Marcos, Patrick e Silvio!!"); 
+        printf("\n\nPressione qualquer tecla para continuar...\n");
+        printf("\x1B[1;40;8;30m    ____________     ______________    \n");
+        printf("   (OOOOOOOOOOOO)   (XXXXXXXXXXXXXX)      \n");
+        printf("   |Dias de Luta|   |Dias de Gloria|  \n");
+        printf("   | \\_(0.0)_/  |   |  \\_(<w>)_/   |     \x1B[0m\n");
     }
 
     void clear_screen() {
